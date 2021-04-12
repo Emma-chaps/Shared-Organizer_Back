@@ -1,6 +1,35 @@
 const express = require('express');
 const router = express.Router();
 
+// landing page
+router.post('/signup');
+router.post('/login/:user');
+
+// widgets according to calendar
+router.get('/:group/dashboard/day');
+router.get('/:group/dashboard/week');
+router.get('/:group/dashboard/month');
+
+// wigets without date
+router.get('/:group/dashboard/infos');
+
+// wiget creation/update/delete
+router.post('/:group/dashboard/widget');
+router.patch('/:group/dashboard/widget');
+router.delete('/:group/dashboard/widget');
+
+// edit settings admin only
+router.get('/:group/family-settings');
+router.patch('/:group/family-settings');
+router.post('/:group/family-settings');
+
+//contact page
+router.post('/contact');
+router.get('/contact');
+
+// about us
+router.get('/about-us');
+
 router.use((request, response) => {
   response.status(404).json({
     success: false,
