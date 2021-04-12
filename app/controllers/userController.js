@@ -1,14 +1,31 @@
-const Group = require('../models/Group');
-const Member = require('../models/Member');
+const { Group, Member } = require('../models');
+const emailValidator = require('email-validator');
+const bcrypt = require('bcrypt');
 
 exports.createAdmin = async (req, res, next) => {
-  const { groupName, firstname, email, password, icon } = req.body;
-  const role = 3;
-  if (!groupName) {
-    throw new Error('No group name was given.');
-  }
-
   try {
+    let { groupName, firstname, email, password, icon } = req.body;
+    console.log('req.body:', req.body);
+    const role = 3;
+
+    // cleans body elements
+    groupName = groupName.trim();
+    firstname = firstname.trim();
+
+    // assigns admin role
+    let member = null;
+    let group = null;
+    let created = false;
+    const error = [];
+
+    // checks if all inputs contain something
+    if (!groupName || !firstname || !email || !password || !icon) {
+      error.push('All fields must contain at least a character.');
+    }
+    // checks if valid email
+    if (!emailValidator.validate(email)) {
+      error.push('Email not valid.');
+    }
     // checks if member already exists
     const searchedMember = await Member.findOne({
       where: {
@@ -17,30 +34,34 @@ exports.createAdmin = async (req, res, next) => {
     });
     // if the member already exists, send back member
     if (searchedMember) {
-      res.json({
-        member: searchedMember,
-        created: false,
-      });
-    } else {
+      error.push('This user already exists.');
+    }
+
+    if (!error.length) {
+      // password encryption
+      const salt = await bcrypt.genSalt(10);
+      const encryptedPassword = await bcrypt.hash(password, salt);
       // admin creation
-      const admin = await Member.create({
+      member = await Member.create({
         firstname,
         email,
-        password,
+        password: encryptedPassword,
         icon,
         role,
       });
-      console.log(admin);
       //group creation
-      const group = await Group.create({
+      group = await Group.create({
         name: groupName,
       });
-      res.json({
-        member: admin,
-        group,
-        created: true,
-      });
+      created = true;
     }
+
+    res.json({
+      member,
+      group,
+      created,
+      error,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
