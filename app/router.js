@@ -1,9 +1,15 @@
 const express = require('express');
+const dashboardController = require('./controllers/dashboardController');
+const settingsController = require('./controllers/settingsController');
+const userController = require('./controllers/userController');
+const widgetController = require('./controllers/widgetController');
+
 const router = express.Router();
 
 // landing page
 router.post('/signup');
-router.post('/login/:user');
+router.post('/login');
+router.post('/logout');
 
 // widgets according to calendar
 router.get('/:group/dashboard/day');
@@ -22,6 +28,7 @@ router.delete('/:group/dashboard/widget');
 router.get('/:group/family-settings');
 router.patch('/:group/family-settings');
 router.post('/:group/family-settings');
+router.delete('/:group/family-settings');
 
 //contact page
 router.post('/contact');

@@ -1,8 +1,8 @@
-const Group = require('./group');
-const Member = require('./member');
-const Widget = require('./widget');
-const Fields = require('./fields');
-const Label = require('./label');
+const Group = require('./Group');
+const Member = require('./Member');
+const Widget = require('./Widget');
+const Field = require('./Field');
+const Label = require('./Label');
 
 Group.hasMany(Member, {
   foreignKey: 'id_group',
@@ -48,4 +48,4 @@ Member.belongsToMany(Widget, {
   otherKey: 'id_widget',
 });
 
-module.exports = { Group, Member, Widget, Fields, Label };
+module.exports = { Group, Member, Widget, Field, Label };
