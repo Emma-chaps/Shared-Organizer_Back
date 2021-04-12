@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt');
 exports.createAdmin = async (req, res, next) => {
   try {
     let { groupName, firstname, email, password, icon } = req.body;
-    console.log('req.body:', req.body);
     const role = 3;
 
     // cleans body elements
