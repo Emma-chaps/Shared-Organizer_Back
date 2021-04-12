@@ -106,10 +106,8 @@ exports.login = async (req, res, next) => {
 
     //checks if all verifications are ok
     if (!error.length) {
-      // const { password, ...memberWithoutPassword } = searchedMember;
       member = searchedMember.dataValues;
       delete member.password;
-      console.log('member XXXXXXXXXXXXXXXXXXXXX:', member);
       connected = true;
     }
 
