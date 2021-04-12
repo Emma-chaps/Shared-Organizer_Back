@@ -8,7 +8,7 @@ const router = express.Router();
 
 // landing page
 router.post('/signup', userController.createAdmin);
-router.post('/login');
+router.post('/login', userController.login);
 router.post('/logout');
 
 // widgets according to calendar
