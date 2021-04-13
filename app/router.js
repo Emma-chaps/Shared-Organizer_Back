@@ -7,7 +7,7 @@ const widgetController = require('./controllers/widgetController');
 const router = express.Router();
 
 // landing page
-router.post('/signup');
+router.post('/signup', userController.createAdmin);
 router.post('/login');
 router.post('/logout');
 
