@@ -10,6 +10,11 @@ const router = express.Router();
 router.post('/signup', userController.createAdmin);
 router.post('/login', userController.login);
 router.post('/logout');
+router.post(
+  '/test',
+  userController.authorizationMiddleware,
+  userController.test,
+);
 
 // widgets according to calendar
 router.get('/:group/dashboard/day');
