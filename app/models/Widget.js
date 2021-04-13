@@ -5,6 +5,10 @@ class Widget extends Model {}
 
 Widget.init(
   {
+    title: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
     list_styles: {
       type: DataTypes.TEXT,
       allowNull: true,
