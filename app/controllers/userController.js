@@ -1,6 +1,38 @@
 const { Group, Member } = require('../models');
 const emailValidator = require('email-validator');
 const bcrypt = require('bcrypt');
+const jsonwebtoken = require('jsonwebtoken');
+
+exports.authorizationMiddleware = (req, res, next) => {
+  //gets bearer header from request
+  const bearerHeader = req.headers['authorization'];
+  //if there is a token
+  if (typeof bearerHeader !== 'undefined') {
+    //gets only the token from the request header
+    const bearerHeaderArray = bearerHeader.split(' ');
+    const bearerToken = bearerHeaderArray[1];
+    //checks if the bearer token corresponds to the server token
+    jsonwebtoken.verify(bearerToken, process.env.JWT_SECRET, (err, data) => {
+      if (err) {
+        // if the tokens don't match
+        res.json({
+          error: 'error 401: Unauthorized token',
+        });
+      } else {
+        // if the tokens match
+        req.bearerToken = bearerToken;
+        req.tokenData = data;
+        //next middleware
+        next();
+      }
+    });
+  } else {
+    // if no token was given
+    res.json({
+      error: 'error 401: Unauthorized token',
+    });
+  }
+};
 
 exports.createAdmin = async (req, res, next) => {
   try {
@@ -70,16 +102,19 @@ exports.createAdmin = async (req, res, next) => {
 };
 
 exports.login = async (req, res, next) => {
+  console.log('req.body:', req.body);
+
   try {
     const { password, email } = req.body;
     const error = [];
     let member = null;
     let connected = false;
+
     // email verification
     if (!emailValidator.validate(email)) {
       error.push('Email not valid.');
     }
-    // checks if email and password not null
+    // checks if email and password are not empty
     if (!email || !password) {
       error.push('All fields must contain something.');
     }
@@ -108,13 +143,36 @@ exports.login = async (req, res, next) => {
       member = searchedMember.dataValues;
       delete member.password;
       connected = true;
-    }
 
-    res.json({
-      error,
-      member,
-      connected,
-    });
+      //creates JWT payload
+      const jwtContent = {
+        id: member.id,
+        role: member.role,
+        firstname: member.firstname,
+      };
+      //creates JWT encryption options
+      const jwtOptions = {
+        algorithm: 'HS256',
+        expiresIn: '3h',
+      };
+      //sends back all info + token signature
+      res.json({
+        error,
+        member,
+        connected,
+        token: jsonwebtoken.sign(
+          jwtContent,
+          process.env.JWT_SECRET,
+          jwtOptions,
+        ),
+      });
+    } else {
+      res.json({
+        error,
+        member,
+        connected,
+      });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
