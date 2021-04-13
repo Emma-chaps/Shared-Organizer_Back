@@ -3,6 +3,10 @@ const emailValidator = require('email-validator');
 const bcrypt = require('bcrypt');
 const jsonwebtoken = require('jsonwebtoken');
 
+exports.test = (req, res, next) => {
+  console.log('XXXXXXXXXXXXXXXXXXXXXXXXX');
+};
+
 exports.authorizationMiddleware = (req, res, next) => {
   //gets bearer header from request
   const bearerHeader = req.headers['authorization'];
@@ -19,6 +23,7 @@ exports.authorizationMiddleware = (req, res, next) => {
           error: 'error 401: Unauthorized token',
         });
       } else {
+        console.log(data);
         // if the tokens match
         req.bearerToken = bearerToken;
         req.tokenData = data;
@@ -47,6 +52,7 @@ exports.createAdmin = async (req, res, next) => {
     let member = null;
     let group = null;
     let created = false;
+    let token = null;
     const error = [];
 
     // checks if all inputs contain something
@@ -69,22 +75,42 @@ exports.createAdmin = async (req, res, next) => {
     }
 
     if (!error.length) {
+      //group creation
+      group = await Group.create({
+        name: groupName,
+      });
+
       // password encryption
       const salt = await bcrypt.genSalt(10);
       const encryptedPassword = await bcrypt.hash(password, salt);
       // admin creation
-      member = await Member.create({
+      const createdMember = await Member.create({
         firstname,
         email,
         password: encryptedPassword,
         icon,
         role,
-      });
-      //group creation
-      group = await Group.create({
-        name: groupName,
+        id_group: group.id,
       });
       created = true;
+
+      //clean member to prevent password to be sent to front
+      member = createdMember.dataValues;
+      delete member.password;
+
+      //creates JWT payload
+      const jwtContent = {
+        idMember: member.id,
+        role: member.role,
+        groupName: member.id_group,
+      };
+      //creates JWT encryption options
+      const jwtOptions = {
+        algorithm: 'HS256',
+        expiresIn: '3h',
+      };
+      //token signature
+      token = jsonwebtoken.sign(jwtContent, process.env.JWT_SECRET, jwtOptions);
     }
 
     res.json({
@@ -92,6 +118,7 @@ exports.createAdmin = async (req, res, next) => {
       group,
       created,
       error,
+      token,
     });
   } catch (error) {
     res.status(500).json({
@@ -146,9 +173,9 @@ exports.login = async (req, res, next) => {
 
       //creates JWT payload
       const jwtContent = {
-        id: member.id,
+        idMember: member.id,
         role: member.role,
-        firstname: member.firstname,
+        groupName: member.id_group,
       };
       //creates JWT encryption options
       const jwtOptions = {

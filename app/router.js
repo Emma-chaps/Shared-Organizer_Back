@@ -9,7 +9,6 @@ const router = express.Router();
 // landing page
 router.post('/signup', userController.createAdmin);
 router.post('/login', userController.login);
-router.post('/logout');
 
 // widgets according to calendar
 router.get('/:group/dashboard/day');
@@ -20,9 +19,12 @@ router.get('/:group/dashboard/month');
 router.get('/:group/dashboard/infos');
 
 // wiget creation/update/delete
-router.post('/:group/dashboard/widget');
-router.patch('/:group/dashboard/widget');
-router.delete('/:group/dashboard/widget');
+router.post(
+  '/dashboard/widgets/:month',
+  userController.authorizationMiddleware,
+);
+router.patch('/:group/dashboard/widgets');
+router.delete('/:group/dashboard/widgets');
 
 // edit settings admin only
 router.get('/:group/family-settings');
