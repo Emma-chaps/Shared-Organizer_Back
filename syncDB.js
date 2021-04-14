@@ -15,6 +15,14 @@ sequelize.sync({ force: true }).then(() => {
       role: 3,
       icon: 'icon',
       id_group: 1,
+    }),
+    Label.create({
+      name: 'Maison',
+      icon: 'icon1',
+    }),
+    Label.create({
+      name: 'Activites',
+      icon: 'icon2',
     })
   );
 });

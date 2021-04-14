@@ -11,7 +11,7 @@ router.post('/signup', userController.createAdmin);
 router.post('/login', userController.login);
 
 // widgets according to calendar
-router.get('/dashboard/widgets/:month');
+router.get('/dashboard/widgets/:period');
 
 // widget creation/update/delete
 router.post(

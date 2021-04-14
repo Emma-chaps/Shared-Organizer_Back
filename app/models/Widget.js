@@ -9,7 +9,7 @@ Widget.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    list_styles: {
+    list_style: {
       type: DataTypes.TEXT,
       allowNull: true,
     },
@@ -24,6 +24,10 @@ Widget.init(
     date: {
       type: DataTypes.DATE,
       allowNull: true,
+    },
+    author: {
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
   },
   { sequelize, tableName: 'widget', timestamps: true },
