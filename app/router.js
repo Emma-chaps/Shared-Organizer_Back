@@ -11,17 +11,13 @@ router.post('/signup', userController.createAdmin);
 router.post('/login', userController.login);
 
 // widgets according to calendar
-router.get('/:group/dashboard/day');
-router.get('/:group/dashboard/week');
-router.get('/:group/dashboard/month');
+router.get('/dashboard/widgets/:period');
 
-// wigets without date
-router.get('/:group/dashboard/infos');
-
-// wiget creation/update/delete
+// widget creation/update/delete
 router.post(
-  '/dashboard/widgets/:month',
+  '/dashboard/widgets/create',
   userController.authorizationMiddleware,
+  widgetController.createWidget,
 );
 router.patch('/:group/dashboard/widgets');
 router.delete('/:group/dashboard/widgets');

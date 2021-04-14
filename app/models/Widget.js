@@ -5,7 +5,11 @@ class Widget extends Model {}
 
 Widget.init(
   {
-    list_styles: {
+    title: {
+      type: DataTypes.TEXT,
+      allowNull: false,
+    },
+    list_style: {
       type: DataTypes.TEXT,
       allowNull: true,
     },
@@ -20,6 +24,10 @@ Widget.init(
     date: {
       type: DataTypes.DATE,
       allowNull: true,
+    },
+    author: {
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
   },
   { sequelize, tableName: 'widget', timestamps: true },

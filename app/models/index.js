@@ -26,26 +26,36 @@ Field.belongsTo(Widget, {
 
 Label.hasMany(Widget, {
   foreignKey: 'id_label',
-  as: 'labels',
+  as: 'widgets',
 });
 
 Widget.belongsTo(Label, {
   foreignKey: 'id_label',
+  as: 'label',
+});
+
+Group.hasMany(Widget, {
+  foreignKey: 'id_group',
   as: 'widgets',
 });
 
-Widget.belongsToMany(Member, {
-  as: 'members',
-  through: 'member_widget',
-  foreignKey: 'id_widget',
-  otherKey: 'id_member',
+Widget.belongsTo(Group, {
+  foreignKey: 'id_group',
+  as: 'group',
 });
 
-Member.belongsToMany(Widget, {
-  as: 'widgets',
-  through: 'member_widget',
-  foreignKey: 'id_member',
-  otherKey: 'id_widget',
-});
+// Widget.belongsToMany(Member, {
+//   as: 'members',
+//   through: 'member_widget',
+//   foreignKey: 'id_widget',
+//   otherKey: 'id_member',
+// });
+
+// Member.belongsToMany(Widget, {
+//   as: 'widgets',
+//   through: 'member_widget',
+//   foreignKey: 'id_member',
+//   otherKey: 'id_widget',
+// });
 
 module.exports = { Group, Member, Widget, Field, Label };

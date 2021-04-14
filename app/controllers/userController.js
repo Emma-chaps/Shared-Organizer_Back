@@ -43,6 +43,7 @@ exports.createAdmin = async (req, res, next) => {
   try {
     let { groupName, firstname, email, password, icon } = req.body;
     const role = 3;
+    icon = 'iconTest';
 
     // cleans body elements
     groupName = groupName.trim();
@@ -102,7 +103,7 @@ exports.createAdmin = async (req, res, next) => {
       const jwtContent = {
         idMember: member.id,
         role: member.role,
-        groupName: member.id_group,
+        groupId: member.id_group,
       };
       //creates JWT encryption options
       const jwtOptions = {
@@ -175,7 +176,7 @@ exports.login = async (req, res, next) => {
       const jwtContent = {
         idMember: member.id,
         role: member.role,
-        groupName: member.id_group,
+        groupId: member.id_group,
       };
       //creates JWT encryption options
       const jwtOptions = {

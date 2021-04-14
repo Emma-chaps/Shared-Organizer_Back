@@ -1,7 +1,18 @@
+// /signup
 {
-	"email" : "dodo@gmail.com",
-	"password" : "dodo",
-	"firstname": "dodo",
-	"groupName": "haha",
+	"email" : "sisi@gmail.com",
+	"password" : "sisi",
+	"firstname": "sisi",
+	"groupName": "saour",
 	"icon": "test"
+}
+
+// /dashboard/widgets/create
+{
+  "title": "widget title",
+  "listStyle": "bullet or checked",
+  "description": "field content",
+  "color": "widget color",
+  "date": "",
+  "labelId": 1
 }
