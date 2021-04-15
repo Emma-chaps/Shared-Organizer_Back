@@ -137,6 +137,7 @@ exports.login = async (req, res, next) => {
     const error = [];
     let member = null;
     let connected = false;
+    let familyMembers = [];
 
     // email verification
     if (!emailValidator.validate(email)) {
@@ -172,6 +173,16 @@ exports.login = async (req, res, next) => {
       delete member.password;
       connected = true;
 
+      //gets all family members
+      familyMembers = await Member.findAll({
+        where: {
+          id_group: member.id_group,
+        },
+      });
+      for (const familyMember of familyMembers) {
+        delete familyMember.dataValues.password;
+      }
+
       //creates JWT payload
       const jwtContent = {
         idMember: member.id,
@@ -187,6 +198,7 @@ exports.login = async (req, res, next) => {
       res.json({
         error,
         member,
+        familyMembers,
         connected,
         token: jsonwebtoken.sign(
           jwtContent,
