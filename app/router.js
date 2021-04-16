@@ -23,7 +23,11 @@ router.patch('/:group/dashboard/widgets');
 router.delete('/:group/dashboard/widgets');
 
 // edit settings admin only
-router.get('/:group/family-settings');
+router.get(
+  '/family-settings',
+  userController.authorizationMiddleware,
+  settingsController.getFamilyInfo,
+);
 router.patch('/:group/family-settings');
 router.post('/:group/family-settings');
 router.delete('/:group/family-settings');
