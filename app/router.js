@@ -3,6 +3,7 @@ const dashboardController = require('./controllers/dashboardController');
 const settingsController = require('./controllers/settingsController');
 const userController = require('./controllers/userController');
 const widgetController = require('./controllers/widgetController');
+const securityController = require('./controllers/securityController');
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ router.get('/dashboard/widgets/:period');
 // widget creation/update/delete
 router.post(
   '/dashboard/widgets/create',
-  userController.authorizationMiddleware,
+  securityController.authorizationMiddleware,
   widgetController.createWidget,
 );
 router.patch('/:group/dashboard/widgets');
@@ -25,11 +26,17 @@ router.delete('/:group/dashboard/widgets');
 // edit settings admin only
 router.get(
   '/family-settings',
-  userController.authorizationMiddleware,
+  securityController.authorizationMiddleware,
+  securityController.adminChecker,
   settingsController.getFamilyInfo,
 );
+router.post(
+  '/family-settings',
+  securityController.authorizationMiddleware,
+  securityController.adminChecker,
+  settingsController.editGroupData,
+);
 router.patch('/:group/family-settings');
-router.post('/:group/family-settings');
 router.delete('/:group/family-settings');
 
 //contact page
