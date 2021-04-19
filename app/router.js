@@ -1,77 +1,77 @@
-const express = require('express');
-const dashboardController = require('./controllers/dashboardController');
-const settingsController = require('./controllers/settingsController');
-const userController = require('./controllers/userController');
-const widgetController = require('./controllers/widgetController');
-const securityController = require('./controllers/securityController');
+const express = require("express");
+const dashboardController = require("./controllers/dashboardController");
+const settingsController = require("./controllers/settingsController");
+const userController = require("./controllers/userController");
+const widgetController = require("./controllers/widgetController");
+const securityController = require("./controllers/securityController");
 
 const router = express.Router();
 
 // landing page
-router.post('/signup', userController.createAdmin);
-router.post('/login', userController.login);
+router.post("/signup", userController.createAdmin);
+router.post("/login", userController.login);
 
 // dashboard get
 router.get(
-  '/dashboard/month/:monthNb',
+  "/dashboard/month/:monthNb",
   // securityController.authorizationMiddleware,
-  dashboardController.getAllWidgetFromMonth,
+  dashboardController.getAllWidgetFromMonth
 );
 router.get(
-  '/dashboard/week/:weekNb',
+  "/dashboard/week/:weekNb",
   // securityController.authorizationMiddleware,
-  dashboardController.getAllWidgetFromWeek,
+  dashboardController.getAllWidgetFromWeek
 );
 router.get(
-  '/dashboard/day/:dayNb',
+  "/dashboard/day/:dayNb",
   // securityController.authorizationMiddleware,
-  dashboardController.getAllWidgetFromDay,
+  dashboardController.getAllWidgetFromDay
 );
 
 // widget creation/update/delete
 router.post(
-  '/dashboard/widgets/create',
+  "/dashboard/widgets/create"
   // securityController.authorizationMiddleware,
   // widgetController.createWidget,
 );
-router.patch('/:group/dashboard/widgets');
-router.delete('/:group/dashboard/widgets');
+router.patch("/:group/dashboard/widgets");
+router.delete("/:group/dashboard/widgets");
 
 // edit settings admin only
 router.get(
-  '/family-settings',
-  // securityController.authorizationMiddleware,
-  // securityController.adminChecker,
-  settingsController.getFamilyInfo,
+  "/family-settings",
+  securityController.authorizationMiddleware,
+  securityController.adminChecker,
+  settingsController.getFamilyInfo
 );
 router.post(
-  '/family-settings',
+  "/family-settings",
   // securityController.authorizationMiddleware,
   // securityController.adminChecker,
-  settingsController.editGroupData,
+  settingsController.editGroupData
 );
 
 router.patch(
-  '/family-settings/group',
+  "/family-settings/group",
   securityController.authorizationMiddleware,
-  // securityController.adminChecker,
-  settingsController.changeGroupName,
+  securityController.adminChecker,
+  settingsController.changeGroupName
 );
 
-router.patch('/:group/family-settings');
-router.delete('/:group/family-settings');
+router.patch("/:group/family-settings");
+router.delete("/:group/family-settings");
 
 //contact page
-router.post('/contact');
-router.get('/contact');
+router.post("/contact");
+router.get("/contact");
 
 // about us
-router.get('/about-us');
+router.get("/about-us");
 
 router.use((request, response) => {
   response.status(404).json({
     success: false,
-    error: '⚠ Service does not exist !',
+    error: "⚠ Service does not exist !",
   });
 });
 
