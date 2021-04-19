@@ -13,7 +13,7 @@ content-type: application/json
 
 POST http://localhost:3001/login HTTP/1.1
 content-type: application/json
-Authorization: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZE1lbWJlciI6NCwicm9sZSI6MywiZ3JvdXBJZCI6NCwiaWF0IjoxNjE4NTc2Mjk5LCJleHAiOjE2MTg1ODcwOTl9.3yrlBPQDALPzKzIGa_iF0hYbepFDOVj5c2E-T62zmCU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZE1lbWJlciI6NCwicm9sZSI6MywiZ3JvdXBJZCI6NCwiaWF0IjoxNjE4NTc2Mjk5LCJleHAiOjE2MTg1ODcwOTl9.3yrlBPQDALPzKzIGa_iF0hYbepFDOVj5c2E-T62zmCU
 
 {
   "email" : "juju@gmail.com",

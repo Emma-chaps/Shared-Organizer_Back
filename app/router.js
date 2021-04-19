@@ -11,14 +11,28 @@ const router = express.Router();
 router.post('/signup', userController.createAdmin);
 router.post('/login', userController.login);
 
-// widgets according to calendar
-router.get('/dashboard/widgets/:period');
+// dashboard get
+router.get(
+  '/dashboard/month/:monthNb',
+  // securityController.authorizationMiddleware,
+  dashboardController.getAllWidgetFromMonth,
+);
+router.get(
+  '/dashboard/week/:weekNb',
+  // securityController.authorizationMiddleware,
+  dashboardController.getAllWidgetFromWeek,
+);
+router.get(
+  '/dashboard/day/:dayNb',
+  // securityController.authorizationMiddleware,
+  dashboardController.getAllWidgetFromDay,
+);
 
 // widget creation/update/delete
 router.post(
   '/dashboard/widgets/create',
-  securityController.authorizationMiddleware,
-  widgetController.createWidget,
+  // securityController.authorizationMiddleware,
+  // widgetController.createWidget,
 );
 router.patch('/:group/dashboard/widgets');
 router.delete('/:group/dashboard/widgets');
@@ -26,16 +40,24 @@ router.delete('/:group/dashboard/widgets');
 // edit settings admin only
 router.get(
   '/family-settings',
-  securityController.authorizationMiddleware,
-  securityController.adminChecker,
+  // securityController.authorizationMiddleware,
+  // securityController.adminChecker,
   settingsController.getFamilyInfo,
 );
 router.post(
   '/family-settings',
-  securityController.authorizationMiddleware,
-  securityController.adminChecker,
+  // securityController.authorizationMiddleware,
+  // securityController.adminChecker,
   settingsController.editGroupData,
 );
+
+router.patch(
+  '/family-settings/group',
+  securityController.authorizationMiddleware,
+  // securityController.adminChecker,
+  settingsController.changeGroupName,
+);
+
 router.patch('/:group/family-settings');
 router.delete('/:group/family-settings');
 

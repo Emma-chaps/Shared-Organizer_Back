@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Field, Group, Label, Widget, Member } = require('./app/models');
+const { Group, Widget, Member } = require('./app/models');
 const sequelize = require('./app/database');
 
 sequelize.sync({ force: true }).then(() => {
@@ -15,14 +15,6 @@ sequelize.sync({ force: true }).then(() => {
       role: 3,
       icon: 'icon',
       id_group: 1,
-    }),
-    Label.create({
-      name: 'Maison',
-      icon: 'icon1',
-    }),
-    Label.create({
-      name: 'Activites',
-      icon: 'icon2',
     })
   );
 });

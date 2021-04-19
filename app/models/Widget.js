@@ -9,21 +9,21 @@ Widget.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
-    list_style: {
-      type: DataTypes.TEXT,
-      allowNull: true,
-    },
     description: {
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    color: {
-      type: DataTypes.TEXT,
-      allowNull: true,
+    date_nb: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
-    date: {
-      type: DataTypes.DATE,
-      allowNull: true,
+    year: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    range: {
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     author: {
       type: DataTypes.TEXT,

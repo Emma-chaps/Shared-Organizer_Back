@@ -33,7 +33,7 @@ exports.editGroupData = async (req, res, next) => {
     const { role, idMember, groupId } = req.tokenData;
     let { firstname, email, password, icon, role: roleNewUser } = req.body;
 
-    let error = [];
+    const error = [];
     let message = [];
 
     // cleans body elements
@@ -103,6 +103,45 @@ exports.editGroupData = async (req, res, next) => {
         error,
       });
     }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+exports.changeGroupName = async (req, res, next) => {
+  try {
+    const { role, idMember, groupId } = req.tokenData;
+    const { groupName } = req.body;
+    const error = [];
+    let updated = false;
+
+    if (!groupName) {
+      error.push('No valid group name was entered');
+    }
+
+    if (!error.length) {
+      const groupUpdate = await Group.update(
+        {
+          name: groupName,
+        },
+        {
+          where: {
+            id: groupId,
+          },
+        },
+      );
+      if (groupUpdate) {
+        updated = true;
+      }
+    }
+    res.json({
+      success: true,
+      error,
+      updated,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,

@@ -108,7 +108,7 @@ exports.createAdmin = async (req, res, next) => {
       //creates JWT encryption options
       const jwtOptions = {
         algorithm: 'HS256',
-        expiresIn: '3h',
+        expiresIn: '24h',
       };
       //token signature
       token = jsonwebtoken.sign(jwtContent, process.env.JWT_SECRET, jwtOptions);
@@ -192,7 +192,7 @@ exports.login = async (req, res, next) => {
       //creates JWT encryption options
       const jwtOptions = {
         algorithm: 'HS256',
-        expiresIn: '3h',
+        expiresIn: '24h',
       };
       //sends back all info + token signature
       res.json({
