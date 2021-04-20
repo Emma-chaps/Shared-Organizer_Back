@@ -13,49 +13,53 @@ router.post("/login", userController.login);
 
 // dashboard get
 router.get(
-  "/dashboard/month/:monthNb",
-  // securityController.authorizationMiddleware,
-  dashboardController.getAllWidgetFromMonth
+
+  '/dashboard/month/:monthNb',
+  securityController.authorizationMiddleware,
+  dashboardController.getAllWidgetFromMonth,
 );
 router.get(
-  "/dashboard/week/:weekNb",
-  // securityController.authorizationMiddleware,
-  dashboardController.getAllWidgetFromWeek
+  '/dashboard/week/:weekNb',
+  securityController.authorizationMiddleware,
+  dashboardController.getAllWidgetFromWeek,
 );
 router.get(
-  "/dashboard/day/:dayNb",
-  // securityController.authorizationMiddleware,
-  dashboardController.getAllWidgetFromDay
+  '/dashboard/day/:dayNb',
+  securityController.authorizationMiddleware,
+  dashboardController.getAllWidgetFromDay,
 );
 
 // widget creation/update/delete
 router.post(
-  "/dashboard/widgets/create"
-  // securityController.authorizationMiddleware,
-  // widgetController.createWidget,
+
+  '/dashboard/widgets/create',
+  securityController.authorizationMiddleware,
+  widgetController.createWidget,
 );
 router.patch("/:group/dashboard/widgets");
 router.delete("/:group/dashboard/widgets");
 
 // edit settings admin only
 router.get(
-  "/family-settings",
+
+  '/family-settings',
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.getFamilyInfo
+  settingsController.getFamilyInfo,
 );
 router.post(
-  "/family-settings",
-  // securityController.authorizationMiddleware,
-  // securityController.adminChecker,
-  settingsController.editGroupData
+  '/family-settings',
+  securityController.authorizationMiddleware,
+  securityController.adminChecker,
+  settingsController.editGroupData,
 );
 
 router.patch(
   "/family-settings/group",
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.changeGroupName
+  settingsController.changeGroupName,
+
 );
 
 router.patch("/:group/family-settings");
