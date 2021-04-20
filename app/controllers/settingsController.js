@@ -31,7 +31,7 @@ exports.getFamilyInfo = async (req, res, next) => {
 exports.editGroupData = async (req, res, next) => {
   try {
     const { role, idMember, groupId } = req.tokenData;
-    let { firstname, email, password, icon, role: roleNewUser } = req.body;
+    let { id, firstname, email, password, icon, role: roleNewUser } = req.body;
 
     const error = [];
     let message = [];
@@ -43,6 +43,9 @@ exports.editGroupData = async (req, res, next) => {
     //
     if (isNaN(roleNewUser)) {
       error.push('"role" must be a number.');
+    }
+    if (isNaN(id)) {
+      error.push('"id" must be a number.');
     }
 
     // checks if all inputs contain something
@@ -56,11 +59,7 @@ exports.editGroupData = async (req, res, next) => {
     }
 
     if (!error.length) {
-      const searchedMember = await Member.findOne({
-        where: {
-          email,
-        },
-      });
+      const searchedMember = await Member.findByPk(id);
       if (!searchedMember) {
         // password encryption
         const salt = await bcrypt.genSalt(10);
