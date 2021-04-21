@@ -2,7 +2,7 @@ const { Widget, Label, Field, Member } = require('../models');
 
 exports.createWidget = async (req, res, next) => {
   try {
-    const { role, idMember, groupId } = req.tokenData;
+    const { role, idMember, groupId, firstname } = req.tokenData;
     let { title, description, dateNb, range, year, familyMembers } = req.body;
 
     // prevents children from creating widgets
@@ -20,13 +20,6 @@ exports.createWidget = async (req, res, next) => {
       !year
     )
       throw new Error('Some required fields are invalid.');
-
-    // // checks dateNb type
-    // dateNb = Number(dateNb);
-    // if (isNaN(dateNb)) {
-    //   throw new Error('The date number (dateNb) entered is not a number.');
-    // }
-    // checks dateNb type
 
     //checks if value is a number
     const numberChecker = (input) => {
@@ -69,27 +62,44 @@ exports.createWidget = async (req, res, next) => {
     const isInPossibleRange = possibleRanges.includes(range);
     if (!isInPossibleRange) throw new Error('The range entered is not valid');
 
-    // get widget author
-    // const widgetAuthor = await Member.findByPk(idMember);
+    const attributedMembers = await Promise.all(
+      familyMembers.map((searchedMember) => Member.findByPk(searchedMember.id)),
+    ).then((values) => {
+      membersFound = values.map((value) => {
+        delete value.dataValues.password;
+        return value.dataValues;
+      });
+      return membersFound;
+    });
 
     //widget creation
-    const widget = await Widget.create({
+    Widget.create({
       title,
       description,
       date_nb: dateNb,
       year,
       range,
-      // author: widgetAuthor.dataValues.firstname,
-      author: 'XXX',
+      author: firstname,
       id_group: groupId,
-    });
-
-    //sends back json if all is ok
-    res.json({
-      success: true,
-      widget,
-      // author: widgetAuthor.dataValues,
-    });
+    })
+      .then((widget) => {
+        Promise.all(
+          attributedMembers.map((attributedMember) => {
+            widget.addMember(attributedMember.id);
+          }),
+        );
+        return widget;
+      })
+      .then((widget) => {
+        //sends back json if all is ok
+        res.json({
+          success: true,
+          widget: {
+            infos: widget,
+            attributedMembers,
+          },
+        });
+      });
   } catch (error) {
     res.status(500).json({
       success: false,
