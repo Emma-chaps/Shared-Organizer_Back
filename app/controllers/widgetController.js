@@ -3,76 +3,92 @@ const { Widget, Label, Field, Member } = require('../models');
 exports.createWidget = async (req, res, next) => {
   try {
     const { role, idMember, groupId } = req.tokenData;
-    const {
-      title,
-      listStyle,
-      description,
-      color,
-      date,
-      labelId,
-      fields,
-    } = req.body;
+    let { title, description, dateNb, range, year, familyMembers } = req.body;
 
     // prevents children from creating widgets
     if (role < 2) {
       throw new Error('Only the admin and the parents can create a widget.');
     }
 
-    // if listStyle is empty, fields.length has to be O
-    if (!listStyle && fields?.length) {
-      throw new Error('The fields entered are not associated with a listStyle');
-    }
-
-    if (fields?.length) {
-      //verifies that all required fields data is entered
-      fields.forEach((field) => {
-        if (!field.content) {
-          throw new Error('Each field must contain acontent');
-        }
-        if (listStyle === 'checkbox' && field.checked !== false) {
-          throw new Error(
-            'The list-style is checkbox, therefore, all fields must be initialized at checked:false',
-          );
-        }
-      });
-    }
-
     //database required fields verification
-    if (!title || !labelId) throw new Error('title and labelId are required');
+    if (
+      !title ||
+      !dateNb ||
+      !range ||
+      !Array.isArray(familyMembers) ||
+      !familyMembers.length ||
+      !year
+    )
+      throw new Error('Some required fields are invalid.');
 
-    //get associated label
-    const dbLabel = await Label.findByPk(labelId);
+    // // checks dateNb type
+    // dateNb = Number(dateNb);
+    // if (isNaN(dateNb)) {
+    //   throw new Error('The date number (dateNb) entered is not a number.');
+    // }
+    // checks dateNb type
+
+    //checks if value is a number
+    const numberChecker = (input) => {
+      if (isNaN(Number(input))) {
+        throw new Error(`The value ${input} is not a number.`);
+      } else {
+        return Number(input);
+      }
+    };
+    dateNb = numberChecker(dateNb);
+    year = numberChecker(year);
+
+    // checks if the date number corresponds to the range
+    const rangeNumberChecker = (min, max) => {
+      if (dateNb < min || dateNb > max) {
+        throw new Error(
+          `The value ${dateNb} is an invalid number for a ${range}.`,
+        );
+      }
+    };
+    switch (range) {
+      case 'month': {
+        rangeNumberChecker(1, 12);
+        break;
+      }
+      case 'week': {
+        rangeNumberChecker(1, 53);
+        break;
+      }
+      case 'day': {
+        rangeNumberChecker(1, 366);
+        break;
+      }
+      default:
+        break;
+    }
+
+    // checks if range is a month, week or day
+    const possibleRanges = ['month', 'week', 'day'];
+    const isInPossibleRange = possibleRanges.includes(range);
+    if (!isInPossibleRange) throw new Error('The range entered is not valid');
 
     // get widget author
-    const widgetAuthor = await Member.findByPk(idMember);
+    // const widgetAuthor = await Member.findByPk(idMember);
 
     //widget creation
     const widget = await Widget.create({
       title,
-      list_style: listStyle,
       description,
-      color,
-      date,
-      author: widgetAuthor.dataValues.firstname,
-      id_label: dbLabel.dataValues.id,
+      date_nb: dateNb,
+      year,
+      range,
+      // author: widgetAuthor.dataValues.firstname,
+      author: 'XXX',
       id_group: groupId,
     });
-
-    const dbfields = [];
-    for (const field of fields) {
-      const newField = await Field.create({
-        description: field.content,
-        checked: field.checked,
-        id_widget: widget.id,
-      });
-      dbfields.push(newField);
-    }
 
     //sends back json if all is ok
     res.json({
       success: true,
       widget,
-      fields: dbfields,
+      // author: widgetAuthor.dataValues,
     });
   } catch (error) {
     res.status(500).json({
