@@ -13,53 +13,56 @@ router.post("/login", userController.login);
 
 // dashboard get
 router.get(
-
-  '/dashboard/month/:monthNb',
+  "/dashboard/month/:monthNb",
   securityController.authorizationMiddleware,
-  dashboardController.getAllWidgetFromMonth,
+  dashboardController.getAllWidgetFromMonth
 );
 router.get(
-  '/dashboard/week/:weekNb',
+  "/dashboard/week/:weekNb",
   securityController.authorizationMiddleware,
-  dashboardController.getAllWidgetFromWeek,
+  dashboardController.getAllWidgetFromWeek
 );
 router.get(
-  '/dashboard/day/:dayNb',
+  "/dashboard/day/:dayNb",
   securityController.authorizationMiddleware,
-  dashboardController.getAllWidgetFromDay,
+  dashboardController.getAllWidgetFromDay
 );
 
 // widget creation/update/delete
 router.post(
-
-  '/dashboard/widgets/create',
+  "/dashboard/widgets/create",
   securityController.authorizationMiddleware,
-  widgetController.createWidget,
+  widgetController.createWidget
 );
 router.patch("/:group/dashboard/widgets");
 router.delete("/:group/dashboard/widgets");
 
 // edit settings admin only
 router.get(
-
-  '/family-settings',
+  "/family-settings",
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.getFamilyInfo,
+  settingsController.getFamilyInfo
 );
 router.post(
-  '/family-settings',
+  "/family-settings",
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.editGroupData,
+  settingsController.addMember
 );
 
 router.patch(
   "/family-settings/group",
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.changeGroupName,
+  settingsController.changeGroupName
+);
 
+router.patch(
+  "/family-settings/members",
+  securityController.authorizationMiddleware,
+  securityController.adminChecker,
+  settingsController.editGroupData
 );
 
 router.patch("/:group/family-settings");
