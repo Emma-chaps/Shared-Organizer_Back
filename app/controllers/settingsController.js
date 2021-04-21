@@ -1,6 +1,6 @@
-const { Member, Group } = require('../models');
-const emailValidator = require('email-validator');
-const bcrypt = require('bcrypt');
+const { Member, Group } = require("../models");
+const emailValidator = require("email-validator");
+const bcrypt = require("bcrypt");
 
 exports.getFamilyInfo = async (req, res, next) => {
   try {
@@ -12,7 +12,7 @@ exports.getFamilyInfo = async (req, res, next) => {
       where: {
         id: groupId,
       },
-      include: 'members',
+      include: "members",
     });
 
     //If all is OK, sends back group containing members
@@ -40,41 +40,28 @@ exports.editGroupData = async (req, res, next) => {
     firstname = firstname.trim();
     icon = icon.trim();
 
+    if (isNaN(id)) {
+      error.push('"id" must be a number.');
+    }
     //
     if (isNaN(roleNewUser)) {
       error.push('"role" must be a number.');
     }
-    if (isNaN(id)) {
-      error.push('"id" must be a number.');
-    }
 
     // checks if all inputs contain something
     if (!firstname || !email || !password || !icon) {
-      error.push('All fields must contain something.');
+      error.push("All fields must contain something.");
     }
 
     // checks if valid email
     if (!emailValidator.validate(email)) {
-      error.push('Email not valid.');
+      error.push("Email not valid.");
     }
 
     if (!error.length) {
       const searchedMember = await Member.findByPk(id);
       if (!searchedMember) {
-        // password encryption
-        const salt = await bcrypt.genSalt(10);
-        const encryptedPassword = await bcrypt.hash(password, salt);
-        const newMember = await Member.create({
-          firstname,
-          email,
-          password: encryptedPassword,
-          icon,
-          role: roleNewUser,
-          id_group: groupId,
-        });
-        message.push(
-          `You just added ${newMember.firstname} to the family! Mazel Tov!`,
-        );
+        error.push(`This member doesn't exist`);
       } else {
         const updatedMember = await Member.update(
           {
@@ -88,14 +75,72 @@ exports.editGroupData = async (req, res, next) => {
             where: {
               id: searchedMember.dataValues.id,
             },
-          },
+          }
         );
         message.push(
-          `${firstname}'s infos were successfully updated ! Congrats!`,
+          `${firstname}'s infos were successfully updated ! Congrats!`
         );
       }
 
       //Sends back updated or created member
+      res.json({
+        success: true,
+        message,
+        error,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+exports.addMember = async (req, res, next) => {
+  try {
+    const { role, idMember, groupId } = req.tokenData;
+    let { firstname, email, password, icon, role: roleNewUser } = req.body;
+
+    const error = [];
+    let message = [];
+
+    // cleans body elements
+    firstname = firstname.trim();
+    icon = icon.trim();
+
+    //
+    if (isNaN(roleNewUser)) {
+      error.push('"role" must be a number.');
+    }
+
+    // checks if all inputs contain something
+    if (!firstname || !email || !password || !icon) {
+      error.push("All fields must contain something.");
+    }
+
+    // checks if valid email
+    if (!emailValidator.validate(email)) {
+      error.push("Email not valid.");
+    }
+
+    if (!error.length) {
+      // password encryption
+      const salt = await bcrypt.genSalt(10);
+      const encryptedPassword = await bcrypt.hash(password, salt);
+      const newMember = await Member.create({
+        firstname,
+        email,
+        password: encryptedPassword,
+        icon,
+        role: roleNewUser,
+        id_group: groupId,
+      });
+      message.push(
+        `You just added ${newMember.firstname} to the family! Mazel Tov!`
+      );
+
+      //Sends back created member
       res.json({
         success: true,
         message,
@@ -118,7 +163,7 @@ exports.changeGroupName = async (req, res, next) => {
     let updated = false;
 
     if (!groupName) {
-      error.push('No valid group name was entered');
+      error.push("No valid group name was entered");
     }
 
     if (!error.length) {
@@ -130,7 +175,7 @@ exports.changeGroupName = async (req, res, next) => {
           where: {
             id: groupId,
           },
-        },
+        }
       );
       if (groupUpdate) {
         updated = true;

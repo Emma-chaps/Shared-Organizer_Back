@@ -1,10 +1,10 @@
-const { Group, Member } = require('../models');
-const emailValidator = require('email-validator');
-const bcrypt = require('bcrypt');
-const jsonwebtoken = require('jsonwebtoken');
+const { Group, Member } = require("../models");
+const emailValidator = require("email-validator");
+const bcrypt = require("bcrypt");
+const jsonwebtoken = require("jsonwebtoken");
 
 exports.test = (req, res, next) => {
-  console.log('XXXXXXXXXXXXXXXXXXXXXXXXX');
+  console.log("XXXXXXXXXXXXXXXXXXXXXXXXX");
 };
 
 // exports.authorizationMiddleware = (req, res, next) => {
@@ -43,7 +43,6 @@ exports.createAdmin = async (req, res, next) => {
   try {
     let { groupName, firstname, email, password, icon } = req.body;
     const role = 3;
-    icon = 'iconTest';
 
     // cleans body elements
     groupName = groupName.trim();
@@ -58,11 +57,11 @@ exports.createAdmin = async (req, res, next) => {
 
     // checks if all inputs contain something
     if (!groupName || !firstname || !email || !password || !icon) {
-      error.push('All fields must contain something.');
+      error.push("All fields must contain something.");
     }
     // checks if valid email
     if (!emailValidator.validate(email)) {
-      error.push('Email not valid.');
+      error.push("Email not valid.");
     }
     // checks if member already exists
     const searchedMember = await Member.findOne({
@@ -72,7 +71,7 @@ exports.createAdmin = async (req, res, next) => {
     });
     // if the member already exists, send back member
     if (searchedMember) {
-      error.push('This user already exists.');
+      error.push("This user already exists.");
     }
 
     if (!error.length) {
@@ -107,8 +106,8 @@ exports.createAdmin = async (req, res, next) => {
       };
       //creates JWT encryption options
       const jwtOptions = {
-        algorithm: 'HS256',
-        expiresIn: '24h',
+        algorithm: "HS256",
+        expiresIn: "24h",
       };
       //token signature
       token = jsonwebtoken.sign(jwtContent, process.env.JWT_SECRET, jwtOptions);
@@ -130,7 +129,7 @@ exports.createAdmin = async (req, res, next) => {
 };
 
 exports.login = async (req, res, next) => {
-  console.log('req.body:', req.body);
+  console.log("req.body:", req.body);
 
   try {
     const { password, email } = req.body;
@@ -141,11 +140,11 @@ exports.login = async (req, res, next) => {
 
     // email verification
     if (!emailValidator.validate(email)) {
-      error.push('Email not valid.');
+      error.push("Email not valid.");
     }
     // checks if email and password are not empty
     if (!email || !password) {
-      error.push('All fields must contain something.');
+      error.push("All fields must contain something.");
     }
 
     // searches member
@@ -160,11 +159,11 @@ exports.login = async (req, res, next) => {
 
     // checks if member exists
     if (!searchedMember) {
-      error.push('This user does not exist.');
+      error.push("This user does not exist.");
     } else {
       // checks if password correponds
       validPwd = await bcrypt.compare(password, searchedMember?.password);
-      !validPwd && error.push('The password is not valid.');
+      !validPwd && error.push("The password is not valid.");
     }
 
     //checks if all verifications are ok
@@ -191,8 +190,8 @@ exports.login = async (req, res, next) => {
       };
       //creates JWT encryption options
       const jwtOptions = {
-        algorithm: 'HS256',
-        expiresIn: '24h',
+        algorithm: "HS256",
+        expiresIn: "24h",
       };
       //sends back all info + token signature
       res.json({
@@ -203,7 +202,7 @@ exports.login = async (req, res, next) => {
         token: jsonwebtoken.sign(
           jwtContent,
           process.env.JWT_SECRET,
-          jwtOptions,
+          jwtOptions
         ),
       });
     } else {
