@@ -2,7 +2,7 @@ const { Member, Group } = require("../models");
 const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
 
-exports.getFamilyInfo = async (req, res, next) => {
+exports.getgroupInfo = async (req, res, next) => {
   try {
     //Info from token
     const { role, idMember, groupId } = req.tokenData;
@@ -137,7 +137,7 @@ exports.addMember = async (req, res, next) => {
         id_group: groupId,
       });
       message.push(
-        `You just added ${newMember.firstname} to the family! Mazel Tov!`
+        `You just added ${newMember.firstname} to the group! Mazel Tov!`
       );
 
       //Sends back created member

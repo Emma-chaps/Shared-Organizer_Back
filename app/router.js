@@ -39,34 +39,34 @@ router.delete("/:group/dashboard/widgets");
 
 // edit settings admin only
 router.get(
-  "/family-settings",
+  "/group-settings",
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.getFamilyInfo
+  settingsController.getgroupInfo
 );
 router.post(
-  "/family-settings",
+  "/group-settings",
   securityController.authorizationMiddleware,
   securityController.adminChecker,
   settingsController.addMember
 );
 
 router.patch(
-  "/family-settings/group",
+  "/group-settings/group",
   securityController.authorizationMiddleware,
   securityController.adminChecker,
   settingsController.changeGroupName
 );
 
 router.patch(
-  "/family-settings/members",
+  "/group-settings/members",
   securityController.authorizationMiddleware,
   securityController.adminChecker,
   settingsController.editGroupData
 );
 
-router.patch("/:group/family-settings");
-router.delete("/:group/family-settings");
+router.patch("/:group/group-settings");
+router.delete("/:group/group-settings");
 
 //contact page
 router.post("/contact");

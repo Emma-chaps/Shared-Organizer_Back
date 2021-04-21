@@ -1,7 +1,7 @@
 {
-  "name": "FamilyOrganizer",
+  "name": "SharedOrganizer",
   "version": "1.0.0",
-  "description": "Tool for family organization",
+  "description": "Tool for group organization",
   "main": "index.js",
   "repository": "git@github.com:O-clock-Pan/projet-bullet-journal-back.git",
   "author": "Emma Charpin - Jeremy Kalvar - Jérôme Bersin - Régis Blec",
