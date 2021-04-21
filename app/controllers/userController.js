@@ -104,6 +104,7 @@ exports.createAdmin = async (req, res, next) => {
         idMember: member.id,
         role: member.role,
         groupId: member.id_group,
+        firstname: member.firstname,
       };
       //creates JWT encryption options
       const jwtOptions = {
@@ -188,6 +189,7 @@ exports.login = async (req, res, next) => {
         idMember: member.id,
         role: member.role,
         groupId: member.id_group,
+        firstname: member.firstname,
       };
       //creates JWT encryption options
       const jwtOptions = {
