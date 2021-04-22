@@ -8,8 +8,14 @@ const securityController = require('./controllers/securityController');
 const router = express.Router();
 
 // landing page
-router.post('/signup', userController.createAdmin);
+router.post('/signup', userController.createAdmin, userController.login);
 router.post('/login', userController.login);
+
+router.get(
+  '/renew-token',
+  securityController.authorizationMiddleware,
+  securityController.renewToken,
+);
 
 // dashboard get
 router.get(
@@ -22,42 +28,41 @@ router.get(
 router.post(
   '/dashboard/widgets/create',
   securityController.authorizationMiddleware,
-  widgetController.createWidget
+  widgetController.createWidget,
 );
 router.patch('/:group/dashboard/widgets');
 router.delete('/:group/dashboard/widgets');
 
 // edit settings admin only
 router.get(
-  "/group-settings",
+  '/group-infos',
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.getgroupInfo
+  settingsController.getgroupInfo,
 );
 router.post(
-  "/group-settings",
+  '/group-settings',
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.addMember
+  settingsController.addMember,
 );
 
 router.patch(
-  "/group-settings/group",
+  '/group-settings/group',
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.changeGroupName
+  settingsController.changeGroupName,
 );
 
 router.patch(
-  "/group-settings/members",
+  '/group-settings/members',
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.editGroupData
+  settingsController.editGroupData,
 );
 
-router.patch("/:group/group-settings");
-router.delete("/:group/group-settings");
-
+router.patch('/:group/group-settings');
+router.delete('/:group/group-settings');
 
 //contact page
 router.post('/contact');

@@ -41,3 +41,23 @@ exports.adminChecker = (req, res, next) => {
     });
   }
 };
+
+exports.renewToken = (req, res, next) => {
+  const { role, idMember, groupId, firstname } = req.tokenData;
+  //creates JWT payload
+  const jwtContent = {
+    idMember,
+    role,
+    groupId,
+    firstname,
+  };
+  //creates JWT encryption options
+  const jwtOptions = {
+    algorithm: 'HS256',
+    expiresIn: '24h',
+  };
+  //sends back all info + token signature
+  res.json({
+    token: jsonwebtoken.sign(jwtContent, process.env.JWT_SECRET, jwtOptions),
+  });
+};
