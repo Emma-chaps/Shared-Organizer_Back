@@ -140,13 +140,13 @@ exports.login = async (req, res, next) => {
     let connected = false;
     let familyMembers = [];
 
-    // email verification
-    if (!emailValidator.validate(email)) {
-      error.push('Email not valid.');
-    }
     // checks if email and password are not empty
     if (!email || !password) {
       error.push('All fields must contain something.');
+    }
+    // email verification
+    if (!emailValidator.validate(email)) {
+      error.push('Email not valid.');
     }
 
     // searches member

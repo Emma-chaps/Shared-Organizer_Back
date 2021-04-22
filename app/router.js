@@ -12,22 +12,6 @@ router.post('/signup', userController.createAdmin);
 router.post('/login', userController.login);
 
 // dashboard get
-// router.get(
-//   '/dashboard/month/:monthNb',
-//   securityController.authorizationMiddleware,
-//   dashboardController.getAllWidgetFromMonth,
-// );
-// router.get(
-//   '/dashboard/week/:weekNb',
-//   securityController.authorizationMiddleware,
-//   dashboardController.getAllWidgetFromWeek,
-// );
-// router.get(
-//   '/dashboard/day/:dayNb',
-//   securityController.authorizationMiddleware,
-//   dashboardController.getAllWidgetFromDay,
-// );
-// all widgets
 router.get(
   '/dashboard/:year/:range/:dateNb',
   securityController.authorizationMiddleware,
