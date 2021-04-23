@@ -3,7 +3,6 @@ const { Member, Group, Widget } = require('../models');
 exports.getWidgets = async (req, res, next) => {
   try {
     let { range, dateNb, year } = req.params;
-    const error = [];
     let searchedWidgets = null;
     //database required fields verification
     if (!dateNb || !range || !year)
@@ -57,6 +56,55 @@ exports.getWidgets = async (req, res, next) => {
       success: true,
       error,
       widget: searchedWidgets,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+exports.getDayWidgetsFromRange = async (req, res, next) => {
+  try {
+    let { year } = req.params;
+    const { dayNumbers } = req.body;
+
+    //database required fields verification
+    if (!year) throw new Error('No year was provided.');
+
+    if (!dayNumbers.length) throw new Error('No days were provided.');
+
+    const numberChecker = (input) => {
+      if (isNaN(Number(input))) {
+        throw new Error(`The value ${input} is not a number.`);
+      } else {
+        return Number(input);
+      }
+    };
+    year = numberChecker(year);
+    //checks if days are numbers and valid range
+    const validDays = dayNumbers.map((day) => numberChecker(day));
+
+    const searchedWidgets = await Promise.all(
+      validDays.map((day) =>
+        Widget.findAll({
+          where: {
+            year,
+            range: 'day',
+            date_nb: day,
+          },
+        }),
+      ),
+    ).then((widgetDates) =>
+      widgetDates.map((widgetDate) =>
+        widgetDate.map((widget) => widget.dataValues),
+      ),
+    );
+
+    res.json({
+      success: true,
+      widgets: searchedWidgets,
     });
   } catch (error) {
     res.status(500).json({

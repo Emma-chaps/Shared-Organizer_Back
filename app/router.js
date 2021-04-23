@@ -17,11 +17,17 @@ router.get(
   securityController.renewToken,
 );
 
-// dashboard get
+// dashboard get all widgets from a specific range
 router.get(
   '/dashboard/:year/:range/:dateNb',
   securityController.authorizationMiddleware,
   dashboardController.getWidgets,
+);
+//dashboard get all day widgets from a specific month or week
+router.post(
+  '/dashboard/days/:year/',
+  // securityController.authorizationMiddleware,
+  dashboardController.getDayWidgetsFromRange,
 );
 
 // widget creation/update/delete
