@@ -85,7 +85,6 @@ exports.getDayWidgetsFromRange = async (req, res, next) => {
     year = numberChecker(year);
     //checks if days are numbers and valid range
     const validDays = dayNumbers.map((day) => numberChecker(day));
-
     const searchedWidgets = await Promise.all(
       validDays.map((day) =>
         Widget.findAll({
@@ -96,15 +95,24 @@ exports.getDayWidgetsFromRange = async (req, res, next) => {
           },
         }),
       ),
-    ).then((widgetDates) =>
-      widgetDates.map((widgetDate) =>
-        widgetDate.map((widget) => widget.dataValues),
-      ),
-    );
+    )
+      .then((widgetDates) =>
+        widgetDates.map((widgetDate) =>
+          widgetDate.map((widget) => {
+            return widget.dataValues;
+          }),
+        ),
+      )
+      // .then((verification) => console.log(verification));
+      .then((arrayDates) => arrayDates.filter((array) => array.length !== 0));
+    const widgetsArray = searchedWidgets.reduce((accumulator, current) => [
+      ...accumulator,
+      ...current,
+    ]);
 
     res.json({
       success: true,
-      widgets: searchedWidgets,
+      widgets: widgetsArray,
     });
   } catch (error) {
     res.status(500).json({
