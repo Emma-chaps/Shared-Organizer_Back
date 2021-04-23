@@ -1,4 +1,4 @@
-const { Widget, Label, Field, Member } = require("../models");
+const { Widget, Label, Field, Member } = require('../models');
 
 exports.createWidget = async (req, res, next) => {
   try {
@@ -7,7 +7,7 @@ exports.createWidget = async (req, res, next) => {
 
     // prevents children from creating widgets
     if (role < 2) {
-      throw new Error("Only the admin and the parents can create a widget.");
+      throw new Error('The user is not authorized to create a widget.');
     }
 
     //database required fields verification
@@ -19,7 +19,7 @@ exports.createWidget = async (req, res, next) => {
       !groupMembers.length ||
       !year
     )
-      throw new Error("Some required fields are invalid.");
+      throw new Error('Some required fields are invalid.');
 
     //checks if value is a number
     const numberChecker = (input) => {
@@ -36,20 +36,20 @@ exports.createWidget = async (req, res, next) => {
     const rangeNumberChecker = (min, max) => {
       if (dateNb < min || dateNb > max) {
         throw new Error(
-          `The value ${dateNb} is an invalid number for a ${range}.`
+          `The value ${dateNb} is an invalid number for a ${range}.`,
         );
       }
     };
     switch (range) {
-      case "month": {
+      case 'month': {
         rangeNumberChecker(1, 12);
         break;
       }
-      case "week": {
+      case 'week': {
         rangeNumberChecker(1, 53);
         break;
       }
-      case "day": {
+      case 'day': {
         rangeNumberChecker(1, 366);
         break;
       }
@@ -58,12 +58,12 @@ exports.createWidget = async (req, res, next) => {
     }
 
     // checks if range is a month, week or day
-    const possibleRanges = ["month", "week", "day"];
+    const possibleRanges = ['month', 'week', 'day'];
     const isInPossibleRange = possibleRanges.includes(range);
-    if (!isInPossibleRange) throw new Error("The range entered is not valid");
+    if (!isInPossibleRange) throw new Error('The range entered is not valid');
 
     const attributedMembers = await Promise.all(
-      groupMembers.map((searchedMember) => Member.findByPk(searchedMember.id))
+      groupMembers.map((searchedMember) => Member.findByPk(searchedMember.id)),
     ).then((values) => {
       membersFound = values.map((value) => {
         delete value.dataValues.password;
@@ -86,7 +86,7 @@ exports.createWidget = async (req, res, next) => {
         Promise.all(
           attributedMembers.map((attributedMember) => {
             widget.addMember(attributedMember.id);
-          })
+          }),
         );
         return widget;
       })
