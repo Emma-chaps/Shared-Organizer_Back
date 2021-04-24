@@ -31,7 +31,7 @@ exports.getgroupInfo = async (req, res, next) => {
 exports.editGroupData = async (req, res, next) => {
   try {
     const { role, idMember, groupId } = req.tokenData;
-    let { id, firstname, email, password, icon, role: roleNewUser } = req.body;
+    let { id, firstname, email, icon, role: roleNewUser } = req.body;
 
     const error = [];
     let message = [];
@@ -49,7 +49,7 @@ exports.editGroupData = async (req, res, next) => {
     }
 
     // checks if all inputs contain something
-    if (!firstname || !email || !password || !icon) {
+    if (!firstname || !email || !icon) {
       error.push("All fields must contain something.");
     }
 
@@ -67,7 +67,6 @@ exports.editGroupData = async (req, res, next) => {
           {
             firstname,
             email,
-            password,
             icon,
             role: roleNewUser,
           },
