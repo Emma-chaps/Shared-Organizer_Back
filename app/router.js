@@ -26,7 +26,7 @@ router.get(
 //dashboard get all day widgets from a specific month or week
 router.post(
   '/dashboard/days/:year',
-  // securityController.authorizationMiddleware,
+  securityController.authorizationMiddleware,
   dashboardController.getDayWidgetsFromRange,
 );
 

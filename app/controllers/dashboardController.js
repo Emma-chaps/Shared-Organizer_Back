@@ -67,6 +67,7 @@ exports.getWidgets = async (req, res, next) => {
 
 exports.getDayWidgetsFromRange = async (req, res, next) => {
   try {
+    const { groupId } = req.tokenData;
     let { year } = req.params;
     const { dayNumbers } = req.body;
 
@@ -92,6 +93,7 @@ exports.getDayWidgetsFromRange = async (req, res, next) => {
             year,
             range: 'day',
             date_nb: day,
+            id_group: groupId,
           },
         }),
       ),
@@ -103,7 +105,6 @@ exports.getDayWidgetsFromRange = async (req, res, next) => {
           }),
         ),
       )
-      // .then((verification) => console.log(verification));
       .then((arrayDates) => arrayDates.filter((array) => array.length !== 0));
     const widgetsArray = searchedWidgets.reduce((accumulator, current) => [
       ...accumulator,
