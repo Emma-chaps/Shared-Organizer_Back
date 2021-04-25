@@ -49,8 +49,19 @@ exports.getWidgets = async (req, res, next) => {
         id_group: groupId,
         year,
       },
+      include: 'members',
     });
-    const widgets = searchedWidgets.map((widget) => widget.dataValues);
+    const members = searchedWidgets.map((widget) =>
+      widget.dataValues.members.map((member) => {
+        delete member.dataValues.password;
+        delete member.dataValues.member_widget;
+        return member.dataValues;
+      }),
+    );
+    const widgets = searchedWidgets.map((widget, index) => {
+      widget.dataValues.members = members[index];
+      return widget.dataValues;
+    });
     console.log('widgets:', widgets);
 
     res.json({
