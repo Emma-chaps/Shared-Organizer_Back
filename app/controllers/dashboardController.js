@@ -2,8 +2,8 @@ const { Member, Group, Widget } = require('../models');
 
 exports.getWidgets = async (req, res, next) => {
   try {
+    const { groupId } = req.tokenData;
     let { range, dateNb, year } = req.params;
-    let searchedWidgets = null;
     //database required fields verification
     if (!dateNb || !range || !year)
       throw new Error('Some required fields are invalid.');
@@ -42,20 +42,20 @@ exports.getWidgets = async (req, res, next) => {
         break;
     }
 
-    if (!error.length) {
-      searchedWidgets = await Widget.findAll({
-        where: {
-          range,
-          date_nb: dateNb,
-          year,
-        },
-      });
-    }
+    const searchedWidgets = await Widget.findAll({
+      where: {
+        range,
+        date_nb: dateNb,
+        id_group: groupId,
+        year,
+      },
+    });
+    const widgets = searchedWidgets.map((widget) => widget.dataValues);
+    console.log('widgets:', widgets);
 
     res.json({
       success: true,
-      error,
-      widget: searchedWidgets,
+      widgets,
     });
   } catch (error) {
     res.status(500).json({
