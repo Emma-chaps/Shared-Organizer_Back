@@ -14,27 +14,27 @@ router.post('/login', userController.login);
 router.get(
   '/renew-token',
   securityController.authorizationMiddleware,
-  securityController.renewToken,
+  securityController.renewToken
 );
 
 // dashboard get all widgets from a specific range
 router.get(
   '/dashboard/:year/:range/:dateNb',
   securityController.authorizationMiddleware,
-  dashboardController.getWidgets,
+  dashboardController.getWidgets
 );
 //dashboard get all day widgets from a specific month or week
 router.post(
   '/dashboard/days/:year',
   securityController.authorizationMiddleware,
-  dashboardController.getDayWidgetsFromRange,
+  dashboardController.getDayWidgetsFromRange
 );
 
 // widget creation/update/delete
 router.post(
   '/dashboard/widgets/create',
   securityController.authorizationMiddleware,
-  widgetController.createWidget,
+  widgetController.createWidget
 );
 router.patch('/:group/dashboard/widgets');
 router.delete('/:group/dashboard/widgets');
@@ -44,27 +44,34 @@ router.get(
   '/group-infos',
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.getgroupInfo,
+  settingsController.getgroupInfo
 );
 router.post(
   '/group-settings',
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.addMember,
+  settingsController.addMember
 );
 
 router.patch(
   '/group-settings/group',
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.changeGroupName,
+  settingsController.changeGroupName
 );
 
 router.patch(
   '/group-settings/members',
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.editGroupData,
+  settingsController.editGroupData
+);
+
+router.delete(
+  '/group-settings/member/delete/:id',
+  securityController.authorizationMiddleware,
+  securityController.adminChecker,
+  settingsController.deleteMember
 );
 
 router.patch('/:group/group-settings');

@@ -1,6 +1,6 @@
-const { Member, Group } = require("../models");
-const emailValidator = require("email-validator");
-const bcrypt = require("bcrypt");
+const { Member, Group } = require('../models');
+const emailValidator = require('email-validator');
+const bcrypt = require('bcrypt');
 
 exports.getgroupInfo = async (req, res, next) => {
   try {
@@ -12,7 +12,7 @@ exports.getgroupInfo = async (req, res, next) => {
       where: {
         id: groupId,
       },
-      include: "members",
+      include: 'members',
     });
 
     //If all is OK, sends back group containing members
@@ -50,12 +50,12 @@ exports.editGroupData = async (req, res, next) => {
 
     // checks if all inputs contain something
     if (!firstname || !email || !icon) {
-      error.push("All fields must contain something.");
+      error.push('All fields must contain something.');
     }
 
     // checks if valid email
     if (!emailValidator.validate(email)) {
-      error.push("Email not valid.");
+      error.push('Email not valid.');
     }
 
     if (!error.length) {
@@ -115,12 +115,12 @@ exports.addMember = async (req, res, next) => {
 
     // checks if all inputs contain something
     if (!firstname || !email || !password || !icon) {
-      error.push("All fields must contain something.");
+      error.push('All fields must contain something.');
     }
 
     // checks if valid email
     if (!emailValidator.validate(email)) {
-      error.push("Email not valid.");
+      error.push('Email not valid.');
     }
 
     if (!error.length) {
@@ -162,7 +162,7 @@ exports.changeGroupName = async (req, res, next) => {
     let updated = false;
 
     if (!groupName) {
-      error.push("No valid group name was entered");
+      error.push('No valid group name was entered');
     }
 
     if (!error.length) {
@@ -185,6 +185,42 @@ exports.changeGroupName = async (req, res, next) => {
       error,
       updated,
     });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+exports.deleteMember = async (req, res, next) => {
+  try {
+    const { role, idMember, groupId } = req.tokenData;
+    let { id } = req.params;
+    const error = [];
+    let message = [];
+    console.log(id);
+
+    //
+    if (isNaN(id)) {
+      error.push('"id" must be a number.');
+    }
+
+    if (!error.length) {
+      const deletedMember = await Member.destroy({
+        where: {
+          id,
+        },
+      });
+      message.push(`You just deleted a member`);
+
+      //Sends back created member
+      res.json({
+        success: true,
+        message,
+        error,
+      });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
