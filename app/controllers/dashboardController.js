@@ -1,5 +1,12 @@
 const { Member, Group, Widget } = require('../models');
-const { getDayOfYear, getDaysInMonth, startOfMonth } = require('date-fns');
+const {
+  getDayOfYear,
+  getDaysInMonth,
+  startOfMonth,
+  endOfMonth,
+  eachWeekOfInterval,
+  getWeek,
+} = require('date-fns');
 const { Op } = require('sequelize');
 
 exports.getWidgets = async (req, res, next) => {
@@ -157,6 +164,14 @@ exports.getAllWidgets = async (req, res, next) => {
 
     //first of the month
     const monthStartDate = startOfMonth(new Date(year, month - 1));
+    //last day of the month
+    const monthEndDate = endOfMonth(new Date(year, month - 1));
+    //weeks contained in month
+    const weeksInMonth = eachWeekOfInterval({
+      start: monthStartDate,
+      end: monthEndDate,
+    });
+    const weekNumbers = weeksInMonth.map((week) => getWeek(week));
     //day number of first of the month
     const rangeStartDayNb = getDayOfYear(monthStartDate);
     //number of days in the month
@@ -187,8 +202,6 @@ exports.getAllWidgets = async (req, res, next) => {
       )
       .then((arrayDates) => arrayDates.filter((array) => array.length !== 0));
 
-    console.log('searchedDayWidgets:', searchedDayWidgets);
-
     let searchedDayWidgetsClean = [];
     if (searchedDayWidgets.length) {
       searchedDayWidgetsClean = searchedDayWidgets.reduce(
@@ -196,7 +209,33 @@ exports.getAllWidgets = async (req, res, next) => {
       );
     }
 
-    console.log('searchedDayWidgetsClean:', searchedDayWidgetsClean);
+    const searchedWeekWidgets = await Promise.all(
+      weekNumbers.map((week) =>
+        Widget.findAll({
+          where: {
+            year,
+            range: 'week',
+            date_nb: Number(week),
+            id_group: groupId,
+          },
+        }),
+      ),
+    )
+      .then((widgetDates) =>
+        widgetDates.map((widgetDate) =>
+          widgetDate.map((widget) => {
+            return widget.dataValues;
+          }),
+        ),
+      )
+      .then((arrayDates) => arrayDates.filter((array) => array.length !== 0));
+
+    let searchedWeekWidgetsClean = [];
+    if (searchedWeekWidgets.length) {
+      searchedWeekWidgetsClean = searchedWeekWidgets.reduce(
+        (accumulator, current) => [...accumulator, ...current],
+      );
+    }
 
     const searchedMonthWidgets = await Widget.findAll({
       where: {
@@ -210,6 +249,7 @@ exports.getAllWidgets = async (req, res, next) => {
 
     const allSearchedWidgets = [
       ...searchedDayWidgetsClean,
+      ...searchedWeekWidgetsClean,
       ...searchedMonthWidgets,
     ];
 
