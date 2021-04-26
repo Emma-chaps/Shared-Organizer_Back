@@ -27,7 +27,7 @@ router.get(
 router.get(
   '/all-widgets/:year/:month',
   securityController.authorizationMiddleware,
-  dashboardController.getAllWidgets,
+  dashboardController.getAllWidgets
 );
 //dashboard get all day widgets from a specific month or week
 router.post(
@@ -71,6 +71,13 @@ router.patch(
   securityController.authorizationMiddleware,
   securityController.adminChecker,
   settingsController.editGroupData
+);
+
+router.patch(
+  '/group-settings/member/password',
+  securityController.authorizationMiddleware,
+  securityController.adminChecker,
+  settingsController.editPassword
 );
 
 router.delete(
