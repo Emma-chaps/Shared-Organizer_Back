@@ -1,4 +1,6 @@
 const { Member, Group, Widget } = require('../models');
+const { getDayOfYear, getDaysInMonth, startOfMonth } = require('date-fns');
+const { Op } = require('sequelize');
 
 exports.getWidgets = async (req, res, next) => {
   try {
@@ -125,6 +127,85 @@ exports.getDayWidgetsFromRange = async (req, res, next) => {
     res.json({
       success: true,
       widgets: widgetsArray,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+exports.getAllWidgets = async (req, res, next) => {
+  try {
+    const { groupId } = req.tokenData;
+    let { year, month } = req.params;
+
+    //database required fields verification
+    if (!year) throw new Error('No year was provided.');
+    if (!month) throw new Error('No month was provided.');
+
+    const numberChecker = (input) => {
+      if (isNaN(Number(input))) {
+        throw new Error(`The value ${input} is not a number.`);
+      } else {
+        return Number(input);
+      }
+    };
+    year = numberChecker(year);
+    month = numberChecker(month);
+
+    //first of the month
+    const monthStartDate = startOfMonth(new Date(year, month - 1));
+    //day number of first of the month
+    const rangeStartDayNb = getDayOfYear(monthStartDate);
+    //number of days in the month
+    const numberOfDaysInMonth = getDaysInMonth(monthStartDate);
+    const dateContainer = new Array(numberOfDaysInMonth).fill(undefined);
+    const dayNumbers = dateContainer.map(
+      (element, index) => rangeStartDayNb + index,
+    );
+
+    const searchedDayWidgets = await Promise.all(
+      dayNumbers.map((day) =>
+        Widget.findAll({
+          where: {
+            year,
+            range: 'day',
+            date_nb: day,
+            id_group: groupId,
+          },
+        }),
+      ),
+    )
+      .then((widgetDates) =>
+        widgetDates.map((widgetDate) =>
+          widgetDate.map((widget) => {
+            return widget.dataValues;
+          }),
+        ),
+      )
+      .then((arrayDates) => arrayDates.filter((array) => array.length !== 0));
+    const widgetsArray = searchedDayWidgets.reduce((accumulator, current) => [
+      ...accumulator,
+      ...current,
+    ]);
+
+    const searchedMonthWidgets = await Widget.findAll({
+      where: {
+        year,
+        range: 'month',
+        date_nb: month,
+        id_group: groupId,
+      },
+    }).then((rawWidgets) => rawWidgets.map((widget) => widget.dataValues));
+    // .then((cleanWidgets) => console.log(cleanWidgets));
+
+    const allSearchedWidgets = [...widgetsArray, ...searchedMonthWidgets];
+
+    res.json({
+      success: true,
+      widgets: allSearchedWidgets,
     });
   } catch (error) {
     res.status(500).json({
