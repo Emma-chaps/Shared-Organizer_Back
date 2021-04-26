@@ -186,10 +186,17 @@ exports.getAllWidgets = async (req, res, next) => {
         ),
       )
       .then((arrayDates) => arrayDates.filter((array) => array.length !== 0));
-    const widgetsArray = searchedDayWidgets.reduce((accumulator, current) => [
-      ...accumulator,
-      ...current,
-    ]);
+
+    console.log('searchedDayWidgets:', searchedDayWidgets);
+
+    let searchedDayWidgetsClean = [];
+    if (searchedDayWidgets.length) {
+      searchedDayWidgetsClean = searchedDayWidgets.reduce(
+        (accumulator, current) => [...accumulator, ...current],
+      );
+    }
+
+    console.log('searchedDayWidgetsClean:', searchedDayWidgetsClean);
 
     const searchedMonthWidgets = await Widget.findAll({
       where: {
@@ -201,7 +208,10 @@ exports.getAllWidgets = async (req, res, next) => {
     }).then((rawWidgets) => rawWidgets.map((widget) => widget.dataValues));
     // .then((cleanWidgets) => console.log(cleanWidgets));
 
-    const allSearchedWidgets = [...widgetsArray, ...searchedMonthWidgets];
+    const allSearchedWidgets = [
+      ...searchedDayWidgetsClean,
+      ...searchedMonthWidgets,
+    ];
 
     res.json({
       success: true,
