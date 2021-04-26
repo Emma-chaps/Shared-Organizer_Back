@@ -15,6 +15,11 @@ exports.getgroupInfo = async (req, res, next) => {
       include: 'members',
     });
 
+    // delete password for each member of members
+    group.members.map((member) => {
+      delete member.dataValues.password;
+    });
+
     //If all is OK, sends back group containing members
     res.json({
       success: true,
