@@ -13,6 +13,12 @@ exports.getgroupInfo = async (req, res, next) => {
         id: groupId,
       },
       include: 'members',
+      order: [['members', 'id', 'ASC']],
+    });
+
+    // delete password for each member of members
+    group.members.map((member) => {
+      delete member.dataValues.password;
     });
 
     //If all is OK, sends back group containing members
@@ -81,6 +87,57 @@ exports.editGroupData = async (req, res, next) => {
         );
       }
 
+      //Sends back updated or created member
+      res.json({
+        success: true,
+        message,
+        error,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+exports.editPassword = async (req, res, next) => {
+  try {
+    const { role, idMember, groupId } = req.tokenData;
+    let { id, password } = req.body;
+
+    const error = [];
+    let message = [];
+
+    if (isNaN(id)) {
+      error.push('"id" must be a number.');
+    }
+
+    // checks if all inputs contain something
+    if (!password) {
+      error.push('All fields must contain something.');
+    }
+
+    if (!error.length) {
+      const searchedMember = await Member.findByPk(id);
+      if (!searchedMember) {
+        error.push(`This member doesn't exist`);
+      } else {
+        const updatedMember = await Member.update(
+          {
+            password,
+          },
+          {
+            where: {
+              id: searchedMember.dataValues.id,
+            },
+          }
+        );
+        message.push(
+          `${searchedMember.firstname}'s password was successfully updated ! Congrats!`
+        );
+      }
       //Sends back updated or created member
       res.json({
         success: true,
