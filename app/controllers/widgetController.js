@@ -36,7 +36,7 @@ exports.createWidget = async (req, res, next) => {
     const rangeNumberChecker = (min, max) => {
       if (dateNb < min || dateNb > max) {
         throw new Error(
-          `The value ${dateNb} is an invalid number for a ${range}.`,
+          `The value ${dateNb} is an invalid number for a ${range}.`
         );
       }
     };
@@ -63,7 +63,7 @@ exports.createWidget = async (req, res, next) => {
     if (!isInPossibleRange) throw new Error('The range entered is not valid');
 
     const attributedMembers = await Promise.all(
-      groupMembers.map((searchedMember) => Member.findByPk(searchedMember.id)),
+      groupMembers.map((searchedMember) => Member.findByPk(searchedMember.id))
     ).then((values) => {
       const membersFound = values.map((value) => {
         delete value.dataValues.password;
@@ -86,7 +86,7 @@ exports.createWidget = async (req, res, next) => {
         Promise.all(
           attributedMembers.map((attributedMember) => {
             widget.addMember(attributedMember.id);
-          }),
+          })
         );
         return widget;
       })
@@ -131,7 +131,7 @@ exports.updateWidget = async (req, res, next) => {
 
     if (groupMembers.length) {
       newMembers = await Promise.all(
-        groupMembers.map((member) => Member.findByPk(member.id)),
+        groupMembers.map((member) => Member.findByPk(member.id))
       ).then((values) => {
         const membersFound = values.map((value) => {
           delete value.dataValues.password;
@@ -154,7 +154,7 @@ exports.updateWidget = async (req, res, next) => {
           id,
           id_group: groupId,
         },
-      },
+      }
     )
       .then(() => Widget.findByPk(id))
       // .then((value) => value.dataValues)
@@ -162,7 +162,7 @@ exports.updateWidget = async (req, res, next) => {
         Promise.all(
           newMembers.map((member) => {
             widget.addMember(member.id);
-          }),
+          })
         );
         return widget;
       })
@@ -172,6 +172,33 @@ exports.updateWidget = async (req, res, next) => {
           success: true,
         });
       });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+exports.deleteWidget = (req, res, next) => {
+  try {
+    let { id } = req.params;
+
+    if (isNaN(Number(id))) {
+      throw new Error(`id is not a number.`);
+    } else {
+      id = Number(id);
+    }
+
+    Widget.destroy({
+      where: {
+        id,
+      },
+    }).then(() =>
+      res.json({
+        success: true,
+      })
+    );
   } catch (error) {
     res.status(500).json({
       success: false,
