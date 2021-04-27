@@ -3,6 +3,8 @@ const dotenv = require('dotenv').config();
 const express = require('express');
 const app = express();
 
+const bodySanitizer = require('./app/middlewares/body-sanitizer');
+
 // cors
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
@@ -23,6 +25,7 @@ app.use((req, res, next) => {
   }
 });
 
+app.use(bodySanitizer);
 // app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
