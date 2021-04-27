@@ -25,7 +25,6 @@ router.get(
 //   dashboardController.getWidgets,
 // );
 
-
 // IMPROVED
 router.get(
   '/all-widgets/:year/:month',
@@ -41,7 +40,6 @@ router.get(
 //   dashboardController.getDayWidgetsFromRange,
 // );
 
-
 // widget creation/update/delete
 router.post(
   '/dashboard/widgets/create',
@@ -51,9 +49,13 @@ router.post(
 router.patch(
   '/update-widget/:id',
   securityController.authorizationMiddleware,
-  widgetController.updateWidget,
+  widgetController.updateWidget
 );
-router.delete('/:group/dashboard/widgets');
+router.delete(
+  '/delete-widget/:id',
+  securityController.authorizationMiddleware,
+  widgetController.deleteWidget
+);
 
 // edit settings admin only
 router.get(
