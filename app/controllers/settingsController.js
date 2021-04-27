@@ -65,6 +65,16 @@ exports.editGroupData = async (req, res, next) => {
     }
 
     if (!error.length) {
+      // checks if member already exists
+      const searchedEmailMember = await Member.findOne({
+        where: {
+          email,
+        },
+      });
+      // if the member already exists, send back member
+      if (searchedEmailMember) {
+        throw new Error('This user already exists.');
+      }
       const searchedMember = await Member.findByPk(id);
       if (!searchedMember) {
         error.push(`This member doesn't exist`);
@@ -124,9 +134,11 @@ exports.editPassword = async (req, res, next) => {
       if (!searchedMember) {
         error.push(`This member doesn't exist`);
       } else {
+        const salt = await bcrypt.genSalt(10);
+        const encryptedPassword = await bcrypt.hash(password, salt);
         const updatedMember = await Member.update(
           {
-            password,
+            password: encryptedPassword,
           },
           {
             where: {
@@ -181,6 +193,17 @@ exports.addMember = async (req, res, next) => {
     }
 
     if (!error.length) {
+      // checks if member already exists
+      const searchedMember = await Member.findOne({
+        where: {
+          email,
+        },
+      });
+      // if the member already exists, send back member
+      if (searchedMember) {
+        throw new Error('This user already exists.');
+      }
+
       // password encryption
       const salt = await bcrypt.genSalt(10);
       const encryptedPassword = await bcrypt.hash(password, salt);
