@@ -11,11 +11,12 @@ content-type: application/json
 
 ###
 
-POST http://localhost:3001/login HTTP/1.1
+PATCH  http://localhost:3000/update-widget/9 HTTP/1.1
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZE1lbWJlciI6NCwicm9sZSI6MywiZ3JvdXBJZCI6NCwiaWF0IjoxNjE4NTc2Mjk5LCJleHAiOjE2MTg1ODcwOTl9.3yrlBPQDALPzKzIGa_iF0hYbepFDOVj5c2E-T62zmCU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZE1lbWJlciI6Mywicm9sZSI6MywiZ3JvdXBJZCI6MywiZmlyc3RuYW1lIjoiYmxhIiwiaWF0IjoxNjE5NDMyNTc3LCJleHAiOjE2MTk1MTg5Nzd9.OIg_og7FUM5WNbJ6GiIVpB9s3Nb-apX6vakYY6xpDmI
 
 {
-  "email" : "juju@gmail.com",
-	"password" : "juju",
+	"title": "updatedTitle", 
+	"description": "updatedDescription",
+	"groupMembers": []
 }

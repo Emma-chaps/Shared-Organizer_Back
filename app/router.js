@@ -18,23 +18,29 @@ router.get(
 );
 
 // dashboard get all widgets from a specific range
-router.get(
-  '/dashboard/:year/:range/:dateNb',
-  securityController.authorizationMiddleware,
-  dashboardController.getWidgets
-);
+
+// router.get(
+//   '/dashboard/:year/:range/:dateNb',
+//   securityController.authorizationMiddleware,
+//   dashboardController.getWidgets,
+// );
+
+
 // IMPROVED
 router.get(
   '/all-widgets/:year/:month',
   securityController.authorizationMiddleware,
   dashboardController.getAllWidgets,
 );
+
 //dashboard get all day widgets from a specific month or week
-router.post(
-  '/dashboard/days/:year',
-  securityController.authorizationMiddleware,
-  dashboardController.getDayWidgetsFromRange
-);
+
+// router.post(
+//   '/dashboard/days/:year',
+//   securityController.authorizationMiddleware,
+//   dashboardController.getDayWidgetsFromRange,
+// );
+
 
 // widget creation/update/delete
 router.post(
@@ -42,7 +48,11 @@ router.post(
   securityController.authorizationMiddleware,
   widgetController.createWidget
 );
-router.patch('/:group/dashboard/widgets');
+router.patch(
+  '/update-widget/:id',
+  securityController.authorizationMiddleware,
+  widgetController.updateWidget,
+);
 router.delete('/:group/dashboard/widgets');
 
 // edit settings admin only

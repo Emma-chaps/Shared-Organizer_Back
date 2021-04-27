@@ -1,4 +1,4 @@
-const { Widget, Label, Field, Member } = require('../models');
+const { Widget, Member } = require('../models');
 
 exports.createWidget = async (req, res, next) => {
   try {
@@ -65,7 +65,7 @@ exports.createWidget = async (req, res, next) => {
     const attributedMembers = await Promise.all(
       groupMembers.map((searchedMember) => Member.findByPk(searchedMember.id)),
     ).then((values) => {
-      membersFound = values.map((value) => {
+      const membersFound = values.map((value) => {
         delete value.dataValues.password;
         return value.dataValues;
       });
@@ -90,14 +90,86 @@ exports.createWidget = async (req, res, next) => {
         );
         return widget;
       })
+      .then(() => {
+        //sends back json if all is ok
+        res.json({
+          success: true,
+        });
+      });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+exports.updateWidget = async (req, res, next) => {
+  try {
+    const { groupId, role } = req.tokenData;
+    let { id } = req.params;
+    const { title, description, groupMembers } = req.body;
+
+    if (role < 2) {
+      throw new Error('The user is not authorized to edit a widget.');
+    }
+
+    const numberChecker = (input) => {
+      if (isNaN(Number(input))) {
+        throw new Error(`The value ${input} is not a number.`);
+      } else {
+        return Number(input);
+      }
+    };
+    id = numberChecker(id);
+
+    if (groupMembers && !Array.isArray(groupMembers)) {
+      throw new Error('The groupMembers array is not valid.');
+    }
+
+    let newMembers = [];
+
+    if (groupMembers.length) {
+      newMembers = await Promise.all(
+        groupMembers.map((member) => Member.findByPk(member.id)),
+      ).then((values) => {
+        const membersFound = values.map((value) => {
+          delete value.dataValues.password;
+          return value.dataValues;
+        });
+        return membersFound;
+      });
+    }
+    if (!newMembers.length) {
+      throw new Error('No member was assigned to the widget');
+    }
+
+    Widget.update(
+      {
+        title,
+        description,
+      },
+      {
+        where: {
+          id,
+          id_group: groupId,
+        },
+      },
+    )
+      .then(() => Widget.findByPk(id))
+      // .then((value) => value.dataValues)
+      .then((widget) => {
+        Promise.all(
+          newMembers.map((member) => {
+            widget.addMember(member.id);
+          }),
+        );
+        return widget;
+      })
       .then((widget) => {
         //sends back json if all is ok
         res.json({
           success: true,
-          widget: {
-            infos: widget,
-            attributedMembers,
-          },
         });
       });
   } catch (error) {
