@@ -1,7 +1,7 @@
-const { Group, Member } = require("../models");
-const emailValidator = require("email-validator");
-const bcrypt = require("bcrypt");
-const jsonwebtoken = require("jsonwebtoken");
+const { Group, Member } = require('../models');
+const emailValidator = require('email-validator');
+const bcrypt = require('bcrypt');
+const jsonwebtoken = require('jsonwebtoken');
 
 exports.createAdmin = async (req, res, next) => {
   try {
@@ -16,11 +16,11 @@ exports.createAdmin = async (req, res, next) => {
 
     // checks if all inputs contain something
     if (!groupName || !firstname || !email || !password || !icon) {
-      throw new Error("All fields must contain something.");
+      throw 'All fields must contain something.';
     }
     // checks if valid email
     if (!emailValidator.validate(email)) {
-      throw new Error("Email not valid.");
+      throw 'Email not valid.';
     }
     // checks if member already exists
     const searchedMember = await Member.findOne({
@@ -30,7 +30,7 @@ exports.createAdmin = async (req, res, next) => {
     });
     // if the member already exists, send back member
     if (searchedMember) {
-      throw new Error("This user already exists.");
+      throw 'This user already exists.';
     }
 
     //group creation
@@ -54,7 +54,7 @@ exports.createAdmin = async (req, res, next) => {
     if (createdMember) {
       next();
     } else {
-      throw new Error("the member was not created");
+      throw 'the member was not created';
     }
   } catch (error) {
     res.status(500).json({
@@ -67,15 +67,14 @@ exports.createAdmin = async (req, res, next) => {
 exports.login = async (req, res, next) => {
   try {
     const { password, email } = req.body;
-    console.log("password:", password);
 
     // checks if email and password are not empty
     if (!email || !password) {
-      throw new Error("All fields must contain something.");
+      throw new Error('All fields must contain something.');
     }
     // email verification
     if (!emailValidator.validate(email)) {
-      throw new Error("Email not valid.");
+      throw new Error('Email not valid.');
     }
 
     // searches member
@@ -84,21 +83,23 @@ exports.login = async (req, res, next) => {
         email,
       },
     });
-    console.log("searchedMember:", searchedMember.dataValues);
+    console.log('searchedMember:', searchedMember.dataValues);
 
     // password verification false by default
     let validPwd = false;
 
     // checks if member exists
     if (!searchedMember) {
-      throw new Error("This user does not exist.");
+      throw new Error('This user does not exist.');
     } else {
       // checks if password correponds
       validPwd = await bcrypt.compare(
         password,
         searchedMember.dataValues.password
       );
-      if (!validPwd) throw new Error("The password is not valid.");
+      if (!validPwd) {
+        throw new Error('The password is not valid.');
+      }
     }
 
     //checks if all verifications are ok
@@ -111,7 +112,7 @@ exports.login = async (req, res, next) => {
         id_group: member.id_group,
       },
     });
-    if (!groupMembers.length) throw new Error("No members were found");
+    if (!groupMembers.length) throw new Error('No members were found');
 
     for (const groupMember of groupMembers) {
       delete groupMember.dataValues.password;
@@ -126,8 +127,8 @@ exports.login = async (req, res, next) => {
     };
     //creates JWT encryption options
     const jwtOptions = {
-      algorithm: "HS256",
-      expiresIn: "24h",
+      algorithm: 'HS256',
+      expiresIn: '24h',
     };
     //sends back all info + token signature
     res.json({

@@ -13,6 +13,7 @@ exports.getgroupInfo = async (req, res, next) => {
         id: groupId,
       },
       include: 'members',
+      order: [['members', 'id', 'ASC']],
     });
 
     // delete password for each member of members
