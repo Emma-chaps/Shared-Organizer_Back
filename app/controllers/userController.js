@@ -16,11 +16,11 @@ exports.createAdmin = async (req, res, next) => {
 
     // checks if all inputs contain something
     if (!groupName || !firstname || !email || !password || !icon) {
-      throw 'All fields must contain something.';
+      throw new Error('All fields must contain something.');
     }
     // checks if valid email
     if (!emailValidator.validate(email)) {
-      throw 'Email not valid.';
+      throw new Error('Email not valid.');
     }
     // checks if member already exists
     const searchedMember = await Member.findOne({
@@ -30,7 +30,7 @@ exports.createAdmin = async (req, res, next) => {
     });
     // if the member already exists, send back member
     if (searchedMember) {
-      throw 'This user already exists.';
+      throw new Error('This user already exists.');
     }
 
     //group creation
@@ -54,7 +54,7 @@ exports.createAdmin = async (req, res, next) => {
     if (createdMember) {
       next();
     } else {
-      throw 'the member was not created';
+      throw new Error('the member was not created');
     }
   } catch (error) {
     res.status(500).json({
