@@ -65,40 +65,44 @@ exports.editGroupData = async (req, res, next) => {
     }
 
     if (!error.length) {
-      // checks if member already exists
-      const searchedEmailMember = await Member.findOne({
-        where: {
-          email,
-        },
-      });
-      // if the member already exists, send back member
-      if (searchedEmailMember) {
-        return res.json({
-          success: false,
-          error: 'This user already exists',
-        });
-      }
       const searchedMember = await Member.findByPk(id);
       if (!searchedMember) {
-        error.push(`This member doesn't exist`);
-      } else {
-        const updatedMember = await Member.update(
-          {
-            firstname,
-            email,
-            icon,
-            role: roleNewUser,
-          },
-          {
-            where: {
-              id: searchedMember.dataValues.id,
-            },
-          }
-        );
-        message.push(
-          `${firstname}'s infos were successfully updated ! Congrats!`
-        );
+        return res.json({
+          success: false,
+          error: `This member doesn't exist`,
+        });
       }
+      if (searchedMember.dataValues.email !== email) {
+        // checks if member already exists
+        const searchedEmailMember = await Member.findOne({
+          where: {
+            email,
+          },
+        });
+        // if the member already exists, send back member
+        if (searchedEmailMember) {
+          return res.json({
+            success: false,
+            error: 'This user already exists',
+          });
+        }
+      }
+      const updatedMember = await Member.update(
+        {
+          firstname,
+          email,
+          icon,
+          role: roleNewUser,
+        },
+        {
+          where: {
+            id: searchedMember.dataValues.id,
+          },
+        }
+      );
+      message.push(
+        `${firstname}'s infos were successfully updated ! Congrats!`
+      );
 
       //Sends back updated or created member
       res.json({
@@ -285,7 +289,6 @@ exports.deleteMember = async (req, res, next) => {
     let { id } = req.params;
     const error = [];
     let message = [];
-    console.log(id);
 
     //
     if (isNaN(id)) {
