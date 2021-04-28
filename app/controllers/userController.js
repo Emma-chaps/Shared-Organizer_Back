@@ -98,7 +98,7 @@ exports.login = async (req, res, next) => {
     // searches member
     const searchedMember = await Member.findOne({
       where: {
-        email,
+        email: email.toLowerCase(),
       },
     });
 

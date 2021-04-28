@@ -90,7 +90,7 @@ exports.editGroupData = async (req, res, next) => {
       const updatedMember = await Member.update(
         {
           firstname,
-          email,
+          email: email.toLowerCase(),
           icon,
           role: roleNewUser,
         },
@@ -219,7 +219,7 @@ exports.addMember = async (req, res, next) => {
       const encryptedPassword = await bcrypt.hash(password, salt);
       const newMember = await Member.create({
         firstname,
-        email,
+        email: email.toLowerCase(),
         password: encryptedPassword,
         icon,
         role: roleNewUser,
