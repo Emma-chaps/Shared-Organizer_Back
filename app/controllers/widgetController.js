@@ -105,6 +105,7 @@ exports.createWidget = async (req, res, next) => {
 };
 
 exports.updateWidget = async (req, res, next) => {
+  console.log('XXXXXX');
   try {
     const { groupId, role } = req.tokenData;
     let { id } = req.params;
@@ -126,13 +127,14 @@ exports.updateWidget = async (req, res, next) => {
     if (groupMembers && !Array.isArray(groupMembers)) {
       throw new Error('The groupMembers array is not valid.');
     }
-
+    let newMembersRaw = [];
     let newMembers = [];
 
     if (groupMembers.length) {
       newMembers = await Promise.all(
         groupMembers.map((member) => Member.findByPk(member.id))
       ).then((values) => {
+        newMembersRaw = values;
         const membersFound = values.map((value) => {
           delete value.dataValues.password;
           return value.dataValues;
@@ -143,8 +145,9 @@ exports.updateWidget = async (req, res, next) => {
     if (!newMembers.length) {
       throw new Error('No member was assigned to the widget');
     }
+    console.log('newMembers:', newMembers);
 
-    Widget.update(
+    const searchedWidgetRaw = await Widget.update(
       {
         title,
         description,
@@ -155,23 +158,51 @@ exports.updateWidget = async (req, res, next) => {
           id_group: groupId,
         },
       }
-    )
-      .then(() => Widget.findByPk(id))
-      // .then((value) => value.dataValues)
-      .then((widget) => {
-        Promise.all(
-          newMembers.map((member) => {
-            widget.addMember(member.id);
-          })
-        );
-        return widget;
+    ).then(() => Widget.findByPk(id, { include: 'members' }));
+
+    const searchedWidget = searchedWidgetRaw.dataValues;
+
+    const widgetMembersIds = searchedWidget.members.map(
+      (member) => member.dataValues.id
+    );
+
+    const widgetWithoutMembers = await Promise.all(
+      widgetMembersIds.map((id) => {
+        searchedWidgetRaw.removeMember(id);
       })
-      .then((widget) => {
-        //sends back json if all is ok
+    )
+      .then(() => Widget.findByPk(id, { include: 'members' }))
+      .then((data) => data);
+
+    const widgetWithNewMembers = await Promise.all(
+      newMembers.map((member) => {
+        searchedWidgetRaw.addMember(member.id);
+      })
+    )
+      .then(() => Widget.findByPk(id, { include: 'members' }))
+      .then((data) => data)
+
+      .then(() => {
         res.json({
           success: true,
         });
       });
+
+    // .then((value) => value.dataValues)
+    // .then((widget) => {
+    //   Promise.all(
+    //     newMembers.map((member) => {
+    //       widget.addMember(member.id);
+    //     })
+    //   );
+    //   return widget;
+    // })
+    // .then((widget) => {
+    //   //sends back json if all is ok
+    //   res.json({
+    //     success: true,
+    //   });
+    // });
   } catch (error) {
     res.status(500).json({
       success: false,
