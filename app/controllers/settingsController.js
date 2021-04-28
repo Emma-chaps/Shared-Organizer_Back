@@ -73,7 +73,10 @@ exports.editGroupData = async (req, res, next) => {
       });
       // if the member already exists, send back member
       if (searchedEmailMember) {
-        throw new Error('This user already exists.');
+        return res.json({
+          success: false,
+          error: 'This user already exists',
+        });
       }
       const searchedMember = await Member.findByPk(id);
       if (!searchedMember) {
@@ -201,7 +204,10 @@ exports.addMember = async (req, res, next) => {
       });
       // if the member already exists, send back member
       if (searchedMember) {
-        throw new Error('This user already exists.');
+        return res.json({
+          success: false,
+          error: 'This user already exists',
+        });
       }
 
       // password encryption
