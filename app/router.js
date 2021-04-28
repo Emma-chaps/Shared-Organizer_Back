@@ -61,7 +61,7 @@ router.delete(
 router.get(
   '/group-infos',
   securityController.authorizationMiddleware,
-  securityController.adminChecker,
+  // securityController.adminChecker,
   settingsController.getgroupInfo
 );
 router.post(

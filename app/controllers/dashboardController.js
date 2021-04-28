@@ -30,7 +30,7 @@ exports.getWidgets = async (req, res, next) => {
     const rangeNumberChecker = (min, max) => {
       if (dateNb < min || dateNb > max) {
         throw new Error(
-          `The value ${dateNb} is an invalid number for a ${range}.`,
+          `The value ${dateNb} is an invalid number for a ${range}.`
         );
       }
     };
@@ -65,7 +65,7 @@ exports.getWidgets = async (req, res, next) => {
         delete member.dataValues.password;
         delete member.dataValues.member_widget;
         return member.dataValues;
-      }),
+      })
     );
     const widgets = searchedWidgets.map((widget, index) => {
       widget.dataValues.members = members[index];
@@ -115,15 +115,15 @@ exports.getDayWidgetsFromRange = async (req, res, next) => {
             date_nb: day,
             id_group: groupId,
           },
-        }),
-      ),
+        })
+      )
     )
       .then((widgetDates) =>
         widgetDates.map((widgetDate) =>
           widgetDate.map((widget) => {
             return widget.dataValues;
-          }),
-        ),
+          })
+        )
       )
       .then((arrayDates) => arrayDates.filter((array) => array.length !== 0));
     const widgetsArray = searchedWidgets.reduce((accumulator, current) => [
@@ -178,7 +178,7 @@ exports.getAllWidgets = async (req, res, next) => {
     const numberOfDaysInMonth = getDaysInMonth(monthStartDate);
     const dateContainer = new Array(numberOfDaysInMonth).fill(undefined);
     const dayNumbers = dateContainer.map(
-      (element, index) => rangeStartDayNb + index,
+      (element, index) => rangeStartDayNb + index
     );
 
     const searchedDayWidgets = await Promise.all(
@@ -192,22 +192,22 @@ exports.getAllWidgets = async (req, res, next) => {
           },
           include: 'members',
           order: [['created_at', 'DESC']],
-        }),
-      ),
+        })
+      )
     )
       .then((widgetDates) =>
         widgetDates.map((widgetDate) =>
           widgetDate.map((widget) => {
             return widget.dataValues;
-          }),
-        ),
+          })
+        )
       )
       .then((arrayDates) => arrayDates.filter((array) => array.length !== 0));
 
     let searchedDayWidgetsClean = [];
     if (searchedDayWidgets.length) {
       searchedDayWidgetsClean = searchedDayWidgets.reduce(
-        (accumulator, current) => [...accumulator, ...current],
+        (accumulator, current) => [...accumulator, ...current]
       );
     }
 
@@ -222,22 +222,22 @@ exports.getAllWidgets = async (req, res, next) => {
           },
           include: 'members',
           order: [['created_at', 'DESC']],
-        }),
-      ),
+        })
+      )
     )
       .then((widgetDates) =>
         widgetDates.map((widgetDate) =>
           widgetDate.map((widget) => {
             return widget.dataValues;
-          }),
-        ),
+          })
+        )
       )
       .then((arrayDates) => arrayDates.filter((array) => array.length !== 0));
 
     let searchedWeekWidgetsClean = [];
     if (searchedWeekWidgets.length) {
       searchedWeekWidgetsClean = searchedWeekWidgets.reduce(
-        (accumulator, current) => [...accumulator, ...current],
+        (accumulator, current) => [...accumulator, ...current]
       );
     }
 
