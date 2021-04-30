@@ -5,9 +5,9 @@ const jsonwebtoken = require('jsonwebtoken');
 
 exports.createAdmin = async (req, res, next) => {
   try {
-    let { groupName, firstname, email, password, icon } = req.body;
+    let { groupName, firstname, email, password } = req.body;
     const role = 3;
-
+    const icon = 'red';
     // cleans body elements
     groupName = groupName.trim();
     firstname = firstname.trim();
