@@ -7,7 +7,7 @@ exports.createAdmin = async (req, res, next) => {
   try {
     let { groupName, firstname, email, password } = req.body;
     const role = 3;
-    const icon = 'red';
+    const icon = 'light-blue';
     // cleans body elements
     groupName = groupName.trim();
     firstname = firstname.trim();
