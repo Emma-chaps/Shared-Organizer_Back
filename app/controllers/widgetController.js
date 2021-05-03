@@ -2,6 +2,7 @@ const { Widget, Member } = require('../models');
 
 exports.createWidget = async (req, res, next) => {
   try {
+    console.log('hihu');
     const { role, idMember, groupId, firstname } = req.tokenData;
     let { title, description, dateNb, range, year, groupMembers } = req.body;
 

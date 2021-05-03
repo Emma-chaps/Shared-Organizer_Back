@@ -190,8 +190,9 @@ exports.getAllWidgets = async (req, res, next) => {
             date_nb: day,
             id_group: groupId,
           },
+          order: [['id', 'ASC']],
           include: 'members',
-          order: [['created_at', 'DESC']],
+          order: [['created_at', 'ASC']],
         })
       )
     )
@@ -220,6 +221,7 @@ exports.getAllWidgets = async (req, res, next) => {
             date_nb: Number(week),
             id_group: groupId,
           },
+          order: [['id', 'ASC']],
           include: 'members',
           order: [['created_at', 'DESC']],
         })
@@ -248,6 +250,7 @@ exports.getAllWidgets = async (req, res, next) => {
         date_nb: month,
         id_group: groupId,
       },
+      order: [['id', 'ASC']],
       include: 'members',
       order: [['created_at', 'DESC']],
     }).then((rawWidgets) => rawWidgets.map((widget) => widget.dataValues));
