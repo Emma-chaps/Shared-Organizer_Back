@@ -67,10 +67,11 @@ exports.editGroupData = async (req, res, next) => {
     if (!error.length) {
       const searchedMember = await Member.findByPk(id);
       if (!searchedMember) {
-        return res.json({
-          success: false,
-          error: `This member doesn't exist`,
-        });
+        // return res.json({
+        //   success: false,
+        //   error: `This member doesn't exist`,
+        // });
+        error.push(`This member doesn't exist`);
       }
       if (searchedMember.dataValues.email !== email) {
         // checks if member already exists
@@ -83,7 +84,7 @@ exports.editGroupData = async (req, res, next) => {
         if (searchedEmailMember) {
           return res.json({
             success: false,
-            error: 'This user already exists',
+            userError: 'This user already exists',
           });
         }
       }
@@ -210,7 +211,7 @@ exports.addMember = async (req, res, next) => {
       if (searchedMember) {
         return res.json({
           success: false,
-          error: 'This user already exists',
+          userError: 'This user already exists',
         });
       }
 

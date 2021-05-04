@@ -84,7 +84,7 @@ exports.login = async (req, res, next) => {
     if (!email || !password) {
       return res.json({
         success: false,
-        error: 'All fields must containe something',
+        error: 'All fields must contain something',
       });
     }
     // email verification
