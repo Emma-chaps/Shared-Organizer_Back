@@ -12,8 +12,6 @@ exports.createAdmin = async (req, res, next) => {
     groupName = groupName.trim();
     firstname = firstname.trim();
 
-    // assigns admin role
-
     // checks if all inputs contain something
     if (!groupName || !firstname || !email || !password || !icon) {
       return res.json({
@@ -28,6 +26,15 @@ exports.createAdmin = async (req, res, next) => {
         error: 'Email not valid.',
       });
     }
+
+    // checks if password have more than 8 character
+    if (password.length < 6) {
+      return res.json({
+        success: false,
+        error: 'Password must have 6 characters minimum.',
+      });
+    }
+
     // checks if member already exists
     const searchedMember = await Member.findOne({
       where: {
