@@ -165,6 +165,7 @@ exports.editPassword = async (req, res, next) => {
           `${searchedMember.firstname}'s password was successfully updated ! Congrats!`
         );
       }
+
       //Sends back updated or created member
       res.json({
         success: true,
