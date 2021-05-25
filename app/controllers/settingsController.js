@@ -136,6 +136,13 @@ exports.editPassword = async (req, res, next) => {
     if (!password) {
       error.push('All fields must contain something.');
     }
+    // checks if password have more than 8 character
+    if (password.length < 6) {
+      return res.json({
+        success: false,
+        error: 'Password must have 6 characters minimum.',
+      });
+    }
 
     if (!error.length) {
       const searchedMember = await Member.findByPk(id);
@@ -158,6 +165,7 @@ exports.editPassword = async (req, res, next) => {
           `${searchedMember.firstname}'s password was successfully updated ! Congrats!`
         );
       }
+
       //Sends back updated or created member
       res.json({
         success: true,
@@ -198,6 +206,14 @@ exports.addMember = async (req, res, next) => {
     // checks if valid email
     if (!emailValidator.validate(email)) {
       error.push('Email not valid.');
+    }
+
+    // checks if password have more than 8 character
+    if (password.length < 6) {
+      return res.json({
+        success: false,
+        error: 'Password must have 6 characters minimum.',
+      });
     }
 
     if (!error.length) {
