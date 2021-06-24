@@ -14,7 +14,7 @@ sequelize.sync({ force: true });
 //       email: 'johndoe@gmail.com',
 //       password: 'jojo',
 //       role: 3,
-//       icon: 'icon',
+//       color: 'color',
 //       id_group: 1,
 //     })
 //   );

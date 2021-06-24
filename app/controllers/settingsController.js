@@ -37,14 +37,14 @@ exports.getgroupInfo = async (req, res, next) => {
 exports.updateMember = async (req, res, next) => {
   try {
     const { id } = req.params;
-    let { firstname, email, icon, role: userRole } = req.body;
+    let { firstname, email, color, role: userRole } = req.body;
 
     const error = [];
     let message = [];
 
     // cleans body elements
     firstname = firstname.trim();
-    icon = icon.trim();
+    color = color.trim();
 
     if (isNaN(id)) {
       error.push('"id" must be a number.');
@@ -55,7 +55,7 @@ exports.updateMember = async (req, res, next) => {
     }
 
     // checks if all inputs contain something
-    if (!firstname || !email || !icon) {
+    if (!firstname || !email || !color) {
       error.push('All fields must contain something.');
     }
 
@@ -92,7 +92,7 @@ exports.updateMember = async (req, res, next) => {
         {
           firstname,
           email: email.toLowerCase(),
-          icon,
+          color,
           role: userRole,
         },
         {
@@ -184,14 +184,14 @@ exports.editPassword = async (req, res, next) => {
 exports.addMember = async (req, res, next) => {
   try {
     const { groupId } = req.tokenData;
-    let { firstname, email, password, icon, role: userRole } = req.body;
+    let { firstname, email, password, color, role: userRole } = req.body;
 
     const error = [];
     let message = [];
 
     // cleans body elements
     firstname = firstname.trim();
-    icon = icon.trim();
+    color = color.trim();
 
     //
     if (isNaN(userRole)) {
@@ -199,7 +199,7 @@ exports.addMember = async (req, res, next) => {
     }
 
     // checks if all inputs contain something
-    if (!firstname || !email || !password || !icon) {
+    if (!firstname || !email || !password || !color) {
       error.push('All fields must contain something.');
     }
 
@@ -238,7 +238,7 @@ exports.addMember = async (req, res, next) => {
         firstname,
         email: email.toLowerCase(),
         password: encryptedPassword,
-        icon,
+        color,
         role: userRole,
         id_group: groupId,
       });

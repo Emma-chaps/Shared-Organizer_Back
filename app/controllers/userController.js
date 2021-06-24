@@ -7,13 +7,13 @@ exports.createAdmin = async (req, res, next) => {
   try {
     let { groupName, firstname, email, password } = req.body;
     const role = 3;
-    const icon = 'light-blue';
+    const color = 'light-blue';
     // cleans body elements
     groupName = groupName.trim();
     firstname = firstname.trim();
 
     // checks if all inputs contain something
-    if (!groupName || !firstname || !email || !password || !icon) {
+    if (!groupName || !firstname || !email || !password || !color) {
       return res.json({
         success: false,
         error: 'All fields must contain something.',
@@ -62,7 +62,7 @@ exports.createAdmin = async (req, res, next) => {
       firstname,
       email,
       password: encryptedPassword,
-      icon,
+      color,
       role,
       id_group: group.id,
     });

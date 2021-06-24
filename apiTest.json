@@ -4,7 +4,7 @@
 	"password" : "juju",
 	"firstname": "juju",
 	"groupName": "Test1",
-	"icon": "test"
+	"color": "test"
 }
 
 // /dashboard/widgets/create

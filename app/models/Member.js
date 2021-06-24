@@ -21,12 +21,12 @@ Member.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    icon: {
+    color: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
   },
-  { sequelize, tableName: 'member', timestamps: true },
+  { sequelize, tableName: 'member', timestamps: true }
 );
 
 module.exports = Member;
