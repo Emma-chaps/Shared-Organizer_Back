@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 exports.getgroupInfo = async (req, res, next) => {
   try {
     //Info from token
-    const { role, idMember, groupId } = req.tokenData;
+    const { groupId } = req.tokenData;
 
     // gets group and associated members
     const group = await Group.findOne({
@@ -34,10 +34,10 @@ exports.getgroupInfo = async (req, res, next) => {
   }
 };
 
-exports.editGroupData = async (req, res, next) => {
+exports.updateMember = async (req, res, next) => {
   try {
-    const { role, idMember, groupId } = req.tokenData;
-    let { id, firstname, email, icon, role: roleNewUser } = req.body;
+    const { id } = req.params;
+    let { firstname, email, icon, role: userRole } = req.body;
 
     const error = [];
     let message = [];
@@ -50,7 +50,7 @@ exports.editGroupData = async (req, res, next) => {
       error.push('"id" must be a number.');
     }
     //
-    if (isNaN(roleNewUser)) {
+    if (isNaN(userRole)) {
       error.push('"role" must be a number.');
     }
 
@@ -93,7 +93,7 @@ exports.editGroupData = async (req, res, next) => {
           firstname,
           email: email.toLowerCase(),
           icon,
-          role: roleNewUser,
+          role: userRole,
         },
         {
           where: {
@@ -122,8 +122,8 @@ exports.editGroupData = async (req, res, next) => {
 
 exports.editPassword = async (req, res, next) => {
   try {
-    const { role, idMember, groupId } = req.tokenData;
-    let { id, password } = req.body;
+    const { id } = req.params;
+    let { password } = req.body;
 
     const error = [];
     let message = [];
@@ -183,8 +183,8 @@ exports.editPassword = async (req, res, next) => {
 
 exports.addMember = async (req, res, next) => {
   try {
-    const { role, idMember, groupId } = req.tokenData;
-    let { firstname, email, password, icon, role: roleNewUser } = req.body;
+    const { groupId } = req.tokenData;
+    let { firstname, email, password, icon, role: userRole } = req.body;
 
     const error = [];
     let message = [];
@@ -194,7 +194,7 @@ exports.addMember = async (req, res, next) => {
     icon = icon.trim();
 
     //
-    if (isNaN(roleNewUser)) {
+    if (isNaN(userRole)) {
       error.push('"role" must be a number.');
     }
 
@@ -239,7 +239,7 @@ exports.addMember = async (req, res, next) => {
         email: email.toLowerCase(),
         password: encryptedPassword,
         icon,
-        role: roleNewUser,
+        role: userRole,
         id_group: groupId,
       });
       message.push(
@@ -263,7 +263,7 @@ exports.addMember = async (req, res, next) => {
 
 exports.changeGroupName = async (req, res, next) => {
   try {
-    const { role, idMember, groupId } = req.tokenData;
+    const { groupId } = req.tokenData;
     const { groupName } = req.body;
     const error = [];
     let updated = false;

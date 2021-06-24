@@ -4,10 +4,11 @@ const express = require('express');
 const app = express();
 
 const bodySanitizer = require('./app/middlewares/body-sanitizer');
+const router = require('./app/router');
 
 // cors
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:8080');
+  res.header('Access-Control-Allow-Origin', 'http://localhost:8085');
   res.header(
     'Access-Control-Allow-Headers',
     'Content-Type, Accept, Authorization'
@@ -25,11 +26,9 @@ app.use((req, res, next) => {
   }
 });
 
-app.use(bodySanitizer);
-// app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-const router = require('./app/router');
+app.use(bodySanitizer);
 
 app.use(router);
 

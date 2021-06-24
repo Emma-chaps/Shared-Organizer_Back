@@ -27,7 +27,7 @@ router.get(
 
 // IMPROVED
 router.get(
-  '/api/all-widgets/:year/:month',
+  '/api/widgets/:year/:month',
   securityController.authorizationMiddleware,
   dashboardController.getAllWidgets
 );
@@ -42,72 +42,63 @@ router.get(
 
 // widget creation/update/delete
 router.post(
-  '/api/dashboard/widgets/create',
+  '/api/widget',
   securityController.authorizationMiddleware,
   widgetController.createWidget
 );
 router.patch(
-  '/api/update-widget/:id',
+  '/api/widget/:id',
   securityController.authorizationMiddleware,
   widgetController.updateWidget
 );
 router.delete(
-  '/api/delete-widget/:id',
+  '/api/widget/:id',
   securityController.authorizationMiddleware,
   widgetController.deleteWidget
 );
 
 // edit settings admin only
 router.get(
-  '/api/group-infos',
+  '/api/group',
   securityController.authorizationMiddleware,
   // securityController.adminChecker,
   settingsController.getgroupInfo
 );
+
+router.patch(
+  '/api/group',
+  securityController.authorizationMiddleware,
+  securityController.adminChecker,
+  settingsController.changeGroupName
+);
+
 router.post(
-  '/api/group-settings',
+  '/api/member',
   securityController.authorizationMiddleware,
   securityController.adminChecker,
   settingsController.addMember
 );
 
 router.patch(
-  '/api/group-settings/group',
+  '/api/member/:id',
   securityController.authorizationMiddleware,
   securityController.adminChecker,
-  settingsController.changeGroupName
+  settingsController.updateMember
 );
 
 router.patch(
-  '/api/group-settings/members',
-  securityController.authorizationMiddleware,
-  securityController.adminChecker,
-  settingsController.editGroupData
-);
-
-router.patch(
-  '/api/group-settings/member/password',
+  '/api/password/:id',
   securityController.authorizationMiddleware,
   securityController.adminChecker,
   settingsController.editPassword
 );
 
 router.delete(
-  '/api/group-settings/member/delete/:id',
+  '/api/member/:id',
   securityController.authorizationMiddleware,
   securityController.adminChecker,
   settingsController.deleteMember
 );
-
-router.patch('/api/:group/group-settings');
-router.delete('/api/:group/group-settings');
-
-//contact page
-router.post('/api/contact');
-router.get('/api/contact');
-
-// about us
-router.get('/api/about-us');
 
 router.use((request, response) => {
   response.status(404).json({
