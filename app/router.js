@@ -11,57 +11,17 @@ const router = express.Router();
 router.post('/api/signup', userController.createAdmin, userController.login);
 router.post('/api/login', userController.login);
 
-router.get(
-  '/renew-token',
-  securityController.authorizationMiddleware,
-  securityController.renewToken
-);
-
-// dashboard get all widgets from a specific range
-
 // router.get(
-//   '/dashboard/:year/:range/:dateNb',
+//   '/renew-token',
 //   securityController.authorizationMiddleware,
-//   dashboardController.getWidgets,
+//   securityController.renewToken
 // );
-
-// IMPROVED
-router.get(
-  '/api/widgets/:year/:month',
-  securityController.authorizationMiddleware,
-  dashboardController.getAllWidgets
-);
-
-//dashboard get all day widgets from a specific month or week
-
-// router.post(
-//   '/dashboard/days/:year',
-//   securityController.authorizationMiddleware,
-//   dashboardController.getDayWidgetsFromRange,
-// );
-
-// widget creation/update/delete
-router.post(
-  '/api/widget',
-  securityController.authorizationMiddleware,
-  widgetController.createWidget
-);
-router.patch(
-  '/api/widget/:id',
-  securityController.authorizationMiddleware,
-  widgetController.updateWidget
-);
-router.delete(
-  '/api/widget/:id',
-  securityController.authorizationMiddleware,
-  widgetController.deleteWidget
-);
 
 // edit settings admin only
 router.get(
   '/api/group',
   securityController.authorizationMiddleware,
-  // securityController.adminChecker,
+  securityController.adminChecker,
   settingsController.getgroupInfo
 );
 
@@ -98,6 +58,28 @@ router.delete(
   securityController.authorizationMiddleware,
   securityController.adminChecker,
   settingsController.deleteMember
+);
+
+// WIDGETS
+router.get(
+  '/api/widgets/:year/:month',
+  securityController.authorizationMiddleware,
+  dashboardController.getAllWidgets
+);
+router.post(
+  '/api/widget',
+  securityController.authorizationMiddleware,
+  widgetController.createWidget
+);
+router.patch(
+  '/api/widget/:id',
+  securityController.authorizationMiddleware,
+  widgetController.updateWidget
+);
+router.delete(
+  '/api/widget/:id',
+  securityController.authorizationMiddleware,
+  widgetController.deleteWidget
 );
 
 router.use((request, response) => {

@@ -22,14 +22,13 @@ exports.getgroupInfo = async (req, res, next) => {
     });
 
     //If all is OK, sends back group containing members
-    res.json({
+    res.status(200).json({
       success: true,
       group,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message,
     });
   }
 };
@@ -186,77 +185,78 @@ exports.addMember = async (req, res, next) => {
     const { groupId } = req.tokenData;
     let { firstname, email, password, color, role: userRole } = req.body;
 
-    const error = [];
-    let message = [];
+    // checks if all inputs contain something
+    if (!firstname || !email || !password || !color || !userRole) {
+      return res.status(403).json({
+        success: false,
+        userError: 'All fields must contain something.',
+      });
+    }
 
     // cleans body elements
     firstname = firstname.trim();
-    color = color.trim();
+    email = email.trim();
+    password = password.trim();
 
     //
     if (isNaN(userRole)) {
-      error.push('"role" must be a number.');
-    }
-
-    // checks if all inputs contain something
-    if (!firstname || !email || !password || !color) {
-      error.push('All fields must contain something.');
+      return res.status(403).json({
+        success: false,
+        userError: '"role" must be a number.',
+      });
     }
 
     // checks if valid email
     if (!emailValidator.validate(email)) {
-      error.push('Email not valid.');
-    }
-
-    // checks if password have more than 8 character
-    if (password.length < 6) {
-      return res.json({
+      return res.status(403).json({
         success: false,
-        error: 'Password must have 6 characters minimum.',
+        userError: 'Email not valid.',
       });
     }
 
-    if (!error.length) {
-      // checks if member already exists
-      const searchedMember = await Member.findOne({
-        where: {
-          email,
-        },
-      });
-      // if the member already exists, send back member
-      if (searchedMember) {
-        return res.json({
-          success: false,
-          userError: 'This user already exists',
-        });
-      }
-
-      // password encryption
-      const salt = await bcrypt.genSalt(10);
-      const encryptedPassword = await bcrypt.hash(password, salt);
-      const newMember = await Member.create({
-        firstname,
-        email: email.toLowerCase(),
-        password: encryptedPassword,
-        color,
-        role: userRole,
-        id_group: groupId,
-      });
-      message.push(
-        `You just added ${newMember.firstname} to the group! Mazel Tov!`
-      );
-
-      //Sends back created member
-      res.json({
-        success: true,
-        message,
-        error,
+    // checks if password have more than 6 characters
+    if (password.length < 6) {
+      return res.status(403).json({
+        success: false,
+        userError: 'Password must have 6 characters minimum.',
       });
     }
+
+    // checks if member already exists
+    const searchedMember = await Member.findOne({
+      where: {
+        email,
+      },
+    });
+    // if the member already exists, send back member
+    if (searchedMember) {
+      return res.status(403).json({
+        success: false,
+        userError: 'This user already exists',
+      });
+    }
+
+    // password encryption
+    const salt = await bcrypt.genSalt(10);
+    const encryptedPassword = await bcrypt.hash(password, salt);
+
+    // add member to database
+    const newMember = await Member.create({
+      firstname,
+      email: email.toLowerCase(),
+      password: encryptedPassword,
+      color,
+      role: userRole,
+      id_group: groupId,
+    });
+
+    //Sends back created member
+    res.status(200).json({
+      success: true,
+    });
   } catch (error) {
-    res.status(500).json({
+    res.status(403).json({
       success: false,
-      error: error.message,
     });
   }
 };

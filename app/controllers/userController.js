@@ -5,23 +5,23 @@ const jsonwebtoken = require('jsonwebtoken');
 
 exports.createAdmin = async (req, res, next) => {
   try {
-    let { groupName, firstname, email, password } = req.body;
+    let { groupName, firstname, email, password, color } = req.body;
     const role = 3;
-    const color = 'light-blue';
     // cleans body elements
     groupName = groupName.trim();
     firstname = firstname.trim();
 
     // checks if all inputs contain something
     if (!groupName || !firstname || !email || !password || !color) {
-      return res.json({
+      return res.status(403).json({
         success: false,
         error: 'All fields must contain something.',
       });
     }
+
     // checks if valid email
     if (!emailValidator.validate(email)) {
-      return res.json({
+      return res.status(403).json({
         success: false,
         error: 'Email not valid.',
       });
@@ -29,7 +29,7 @@ exports.createAdmin = async (req, res, next) => {
 
     // checks if password have more than 8 character
     if (password.length < 6) {
-      return res.json({
+      return res.status(403).json({
         success: false,
         error: 'Password must have 6 characters minimum.',
       });
@@ -43,7 +43,7 @@ exports.createAdmin = async (req, res, next) => {
     });
     // if the member already exists, send back member
     if (searchedMember) {
-      return res.json({
+      return res.status(403).json({
         success: false,
         error: 'This user already exists',
       });
@@ -70,33 +70,32 @@ exports.createAdmin = async (req, res, next) => {
     if (createdMember) {
       next();
     } else {
-      return res.json({
+      return res.status(403).json({
         success: false,
         error: 'The member was not created.',
       });
     }
   } catch (error) {
-    res.status(500).json({
+    res.status(403).json({
       success: false,
       error: error.message,
     });
   }
 };
-
 exports.login = async (req, res, next) => {
   try {
     const { password, email } = req.body;
 
     // checks if email and password are not empty
     if (!email || !password) {
-      return res.json({
+      return res.status(403).json({
         success: false,
         error: 'All fields must contain something',
       });
     }
     // email verification
     if (!emailValidator.validate(email)) {
-      return res.json({
+      return res.status(403).json({
         success: false,
         error: 'Email is not valid',
       });
@@ -114,7 +113,7 @@ exports.login = async (req, res, next) => {
 
     // checks if member exists
     if (!searchedMember) {
-      return res.json({
+      return res.status(403).json({
         success: false,
         error: 'This user does not exist.',
       });
@@ -125,7 +124,7 @@ exports.login = async (req, res, next) => {
         searchedMember.dataValues.password
       );
       if (!validPwd) {
-        return res.json({
+        return res.status(403).json({
           success: false,
           error: 'The password is not valid.',
         });
@@ -143,7 +142,7 @@ exports.login = async (req, res, next) => {
       },
     });
     if (!groupMembers.length) {
-      return res.json({
+      return res.status(403).json({
         success: false,
         error: 'No members were found',
       });
@@ -173,7 +172,7 @@ exports.login = async (req, res, next) => {
       token: jsonwebtoken.sign(jwtContent, process.env.JWT_SECRET, jwtOptions),
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(403).json({
       success: false,
       error: error.message,
     });

@@ -25,7 +25,7 @@ app.use((req, res, next) => {
     next();
   }
 });
-
+// body formated in JSON
 app.use(express.json());
 
 app.use(bodySanitizer);

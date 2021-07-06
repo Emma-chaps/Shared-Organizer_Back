@@ -1,7 +1,7 @@
 const jsonwebtoken = require('jsonwebtoken');
 
 exports.authorizationMiddleware = (req, res, next) => {
-  //gets bearer header from request
+  // gets bearer header from request
   const bearerHeader = req.headers['authorization'];
   //if there is a token
   if (typeof bearerHeader !== 'undefined') {
@@ -12,8 +12,8 @@ exports.authorizationMiddleware = (req, res, next) => {
     jsonwebtoken.verify(bearerToken, process.env.JWT_SECRET, (err, data) => {
       if (err) {
         // if the tokens don't match
-        res.json({
-          error: 'error 401: Unauthorized token',
+        res.status(401).json({
+          error: 'Unauthorized token',
         });
       } else {
         // if the tokens match
@@ -25,8 +25,8 @@ exports.authorizationMiddleware = (req, res, next) => {
     });
   } else {
     // if no token was given
-    res.json({
-      error: 'error 401: Unauthorized token',
+    res.status(401).json({
+      error: 'Unauthorized token',
     });
   }
 };
@@ -36,8 +36,8 @@ exports.adminChecker = (req, res, next) => {
   if (role === 3) {
     next();
   } else {
-    res.json({
-      error: 'error 401: Only admins can access this route',
+    res.status(403).json({
+      error: 'Only admins can access this route',
     });
   }
 };

@@ -2,8 +2,7 @@ const { Widget, Member } = require('../models');
 
 exports.createWidget = async (req, res, next) => {
   try {
-    console.log('hihu');
-    const { role, idMember, groupId, firstname } = req.tokenData;
+    const { role, groupId, firstname } = req.tokenData;
     let { title, description, dateNb, range, year, groupMembers } = req.body;
 
     // prevents children from creating widgets
@@ -58,11 +57,12 @@ exports.createWidget = async (req, res, next) => {
         break;
     }
 
-    // checks if range is a month, week or day
+    // checks if range is valide
     const possibleRanges = ['month', 'week', 'day'];
     const isInPossibleRange = possibleRanges.includes(range);
     if (!isInPossibleRange) throw new Error('The range entered is not valid');
 
+    // checks if members exist and delete password
     const attributedMembers = await Promise.all(
       groupMembers.map((searchedMember) => Member.findByPk(searchedMember.id))
     ).then((values) => {
@@ -92,21 +92,18 @@ exports.createWidget = async (req, res, next) => {
         return widget;
       })
       .then(() => {
-        //sends back json if all is ok
-        res.json({
+        res.status(200).json({
           success: true,
         });
       });
   } catch (error) {
-    res.status(500).json({
+    res.status(401).json({
       success: false,
-      error: error.message,
     });
   }
 };
 
 exports.updateWidget = async (req, res, next) => {
-  console.log('XXXXXX');
   try {
     const { groupId, role } = req.tokenData;
     let { id } = req.params;
@@ -146,7 +143,6 @@ exports.updateWidget = async (req, res, next) => {
     if (!newMembers.length) {
       throw new Error('No member was assigned to the widget');
     }
-    console.log('newMembers:', newMembers);
 
     const searchedWidgetRaw = await Widget.update(
       {
@@ -217,7 +213,10 @@ exports.deleteWidget = (req, res, next) => {
     let { id } = req.params;
 
     if (isNaN(Number(id))) {
-      throw new Error(`id is not a number.`);
+      return res.status(403).json({
+        success: false,
+        error: 'All fields must contain something',
+      });
     } else {
       id = Number(id);
     }
@@ -227,14 +226,13 @@ exports.deleteWidget = (req, res, next) => {
         id,
       },
     }).then(() =>
-      res.json({
+      res.status(200).json({
         success: true,
       })
     );
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: error.message,
     });
   }
 };
