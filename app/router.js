@@ -11,12 +11,6 @@ const router = express.Router();
 router.post('/api/signup', userController.createAdmin, userController.login);
 router.post('/api/login', userController.login);
 
-// router.get(
-//   '/renew-token',
-//   securityController.authorizationMiddleware,
-//   securityController.renewToken
-// );
-
 // edit settings admin only
 router.get(
   '/api/group',
@@ -88,5 +82,11 @@ router.use((request, response) => {
     error: '⚠ Service does not exist !',
   });
 });
+
+// router.get(
+//   '/renew-token',
+//   securityController.authorizationMiddleware,
+//   securityController.renewToken
+// );
 
 module.exports = router;

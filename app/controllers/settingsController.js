@@ -180,7 +180,7 @@ exports.editPassword = async (req, res, next) => {
   }
 };
 
-exports.addMember = async (req, res, next) => {
+exports.addMember = async (req, res) => {
   try {
     const { groupId } = req.tokenData;
     let { firstname, email, password, color, role: userRole } = req.body;
@@ -261,7 +261,7 @@ exports.addMember = async (req, res, next) => {
   }
 };
 
-exports.changeGroupName = async (req, res, next) => {
+exports.changeGroupName = async (req, res) => {
   try {
     const { groupId } = req.tokenData;
     const { groupName } = req.body;

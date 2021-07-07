@@ -17,7 +17,6 @@ exports.authorizationMiddleware = (req, res, next) => {
         });
       } else {
         // if the tokens match
-        req.bearerToken = bearerToken;
         req.tokenData = data;
         //next middleware
         next();
