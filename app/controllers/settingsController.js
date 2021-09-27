@@ -135,11 +135,16 @@ exports.editPassword = async (req, res, next) => {
     if (!password) {
       error.push('All fields must contain something.');
     }
-    // checks if password have more than 8 character
-    if (password.length < 6) {
-      return res.json({
+
+    // checks if password have more than 8 character, one uppercase letter, one lowercase letter, one special case letter and one digit.
+    const regexPassword =
+      /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*([\d]){1})((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/g;
+    const passwordValidation = regexPassword.test(password);
+    if (!passwordValidation) {
+      return res.status(403).json({
         success: false,
-        error: 'Password must have 6 characters minimum.',
+        error:
+          'Password must have 8 characters minimum, one uppercase, one lowercase, one special case and one digit.',
       });
     }
 
@@ -213,12 +218,15 @@ exports.addMember = async (req, res) => {
         userError: 'Email not valid.',
       });
     }
-
-    // checks if password have more than 6 characters
-    if (password.length < 6) {
+    // checks if password have more than 8 character, one uppercase letter, one lowercase letter, one special case letter and one digit.
+    const regexPassword =
+      /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*([\d]){1})((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/g;
+    const passwordValidation = regexPassword.test(password);
+    if (!passwordValidation) {
       return res.status(403).json({
         success: false,
-        userError: 'Password must have 6 characters minimum.',
+        userError:
+          'Password must have 8 characters minimum, one uppercase, one lowercase, one special case and one digit.',
       });
     }
 

@@ -30,8 +30,6 @@ exports.createAdmin = async (req, res, next) => {
     const regexPassword =
       /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*([\d]){1})((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/g;
     const passwordValidation = regexPassword.test(password);
-    console.log({ passwordValidation });
-    // checks if password have more than 8 character
     if (!passwordValidation) {
       return res.status(403).json({
         success: false,
