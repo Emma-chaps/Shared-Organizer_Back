@@ -26,12 +26,17 @@ exports.createAdmin = async (req, res, next) => {
         error: 'Email not valid.',
       });
     }
-
+    // checks if password have more than 8 character, one uppercase letter, one lowercase letter, one special case letter and one digit.
+    const regexPassword =
+      /^.*(?=.{8,})((?=.*[!@#$%^&*()\-_=+{};:,<.>]){1})(?=.*([\d]){1})((?=.*[a-z]){1})((?=.*[A-Z]){1}).*$/g;
+    const passwordValidation = regexPassword.test(password);
+    console.log({ passwordValidation });
     // checks if password have more than 8 character
-    if (password.length < 6) {
+    if (!passwordValidation) {
       return res.status(403).json({
         success: false,
-        error: 'Password must have 6 characters minimum.',
+        error:
+          'Password must have 8 characters minimum, one uppercase, one lowercase, one special case and one digit.',
       });
     }
 

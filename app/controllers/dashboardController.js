@@ -190,7 +190,6 @@ exports.getAllWidgets = async (req, res, next) => {
             date_nb: day,
             id_group: groupId,
           },
-          order: [['id', 'ASC']],
           include: 'members',
           order: [['created_at', 'ASC']],
         })
